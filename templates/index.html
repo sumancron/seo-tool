@@ -11,8 +11,8 @@
             --ink: #141210;
             --paper: #f7f4ef;
             --cream: #ede8e0;
-            --accent: #c0441e;
-            --accent-hover: #a3361a;
+            --accent: #0038f0;
+            --accent-hover: #1356ff;
             --accent-light: #f5e4de;
             --muted: #8c887f;
             --muted2: #b5b0a7;
@@ -21,9 +21,9 @@
             --surface: #ffffff;
             --green: #1e7a4a;
             --green-light: #ddf0e8;
-            --amber: #b06d00;
+            --amber: #002fb0;
             --amber-light: #fef3de;
-            --red: #c0341e;
+            --red: #001aff;
             --red-light: #fde8e4;
             --blue: #1a56a0;
             --blue-light: #ddeeff;
@@ -730,7 +730,7 @@
 <div class="topbar">
     <div class="topbar-brand">
         SEO Blog <span class="accent">Studio</span>
-        <div class="topbar-pill">Powered by Claude Sonnet 4</div>
+        <div class="topbar-pill">Powered by Crontools</div>
     </div>
     <div class="topbar-steps">
         <div class="step-dot active" id="step1"><div class="dot"></div>Configure</div>
@@ -744,7 +744,7 @@
 <!-- LOADING OVERLAY -->
 <div class="loading-overlay" id="loading">
     <div class="loader-ring"></div>
-    <div class="loading-text" id="loading-text">Claude is analyzing your brief...</div>
+    <div class="loading-text" id="loading-text">Crontools is analyzing your brief...</div>
     <div class="loading-steps">
         <div class="loading-step" id="ls1"><div class="dot"></div>Reading context and competitor analysis</div>
         <div class="loading-step" id="ls2"><div class="dot"></div>Crafting SEO structure and keyword strategy</div>
@@ -949,10 +949,10 @@
         <button class="btn-generate" id="submitBtn" onclick="generateBlog()">
             <span id="btnText">✦ Generate SEO Blog Post</span>
         </button>
-        <button class="btn-optimize" id="optimizeBtn" onclick="optimizePrompt()">
+        {% comment %} <button class="btn-optimize" id="optimizeBtn" onclick="optimizePrompt()">
             ⚡ Optimize Prompt
-        </button>
-        <div class="generate-hint">Takes 30–90 seconds &middot; Uses Claude Sonnet 4</div>
+        </button> {% endcomment %}
+        <div class="generate-hint">Takes 30–90 seconds</div>
     </div>
 </div><!-- /form-panel -->
 
@@ -1026,10 +1026,10 @@
         <div class="empty-state" id="images-empty">
             <div class="empty-icon">◎</div>
             <h3>Image placement suggestions will appear here</h3>
-            <p>Claude will suggest where images belong and describe each one</p>
+            <p>Crontools will suggest where images belong and describe each one</p>
         </div>
         <div id="images-output" style="display:none">
-            <div class="images-header">Claude's image placement recommendations — brief your designer or photographer from these</div>
+            <div class="images-header">Crontools' image placement recommendations — brief your designer or photographer from these</div>
             <div id="image-suggestion-cards"></div>
         </div>
     </div>
