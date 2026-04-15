@@ -12,7 +12,7 @@ app = FastAPI(title="SEO Blog Studio")
 # --- API Configuration ---
 AIML_API_KEY = "6081d4afffd640d18ea529f1e4747f90"
 AIML_BASE_URL = "https://api.aimlapi.com/v1/chat/completions"
-AIML_MODEL = "anthropic/claude-sonnet-4"
+AIML_MODEL = "anthropic/claude-opus-4-6"
 
 # --- Storage ---
 COMPANIES_FILE = Path("companies.json")
