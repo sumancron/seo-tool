@@ -11,8 +11,8 @@
             --ink: #141210;
             --paper: #f7f4ef;
             --cream: #ede8e0;
-            --accent: #007ad1;
-            --accent-hover: #0798ff;
+            --accent: #c0441e;
+            --accent-hover: #a3361a;
             --accent-light: #f5e4de;
             --muted: #8c887f;
             --muted2: #b5b0a7;
@@ -21,9 +21,9 @@
             --surface: #ffffff;
             --green: #1e7a4a;
             --green-light: #ddf0e8;
-            --amber: #1f97ff;
+            --amber: #b06d00;
             --amber-light: #fef3de;
-            --red: #0025a9;
+            --red: #c0341e;
             --red-light: #fde8e4;
             --blue: #1a56a0;
             --blue-light: #ddeeff;
@@ -325,7 +325,7 @@
             50% { box-shadow: 0 0 0 6px rgba(30, 122, 74, 0); }
         }
 
-        /* Strategy Modal */
+        /* Optimize Prompt Modal */
         .optimize-modal-overlay {
             position: fixed; inset: 0; z-index: 500;
             background: rgba(20, 18, 16, 0.6); backdrop-filter: blur(4px);
@@ -334,69 +334,33 @@
         .optimize-modal-overlay.visible { display: flex; }
         .optimize-modal {
             background: var(--surface); border-radius: 16px;
-            width: min(740px, 92vw); max-height: 85vh;
+            width: min(680px, 90vw); max-height: 80vh;
             box-shadow: 0 24px 80px rgba(0,0,0,0.25);
             display: flex; flex-direction: column; overflow: hidden;
         }
         .optimize-modal-header {
-            padding: 1.25rem 1.5rem; background: var(--ink);
-            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding: 1.25rem 1.5rem; background: var(--cream);
+            border-bottom: 1px solid var(--border);
             display: flex; align-items: center; justify-content: space-between;
         }
         .optimize-modal-title {
-            font-family: 'Fraunces', serif; font-size: 1.15rem; font-weight: 500; color: #fff;
-            display: flex; align-items: center; gap: 0.6rem;
-        }
-        .optimize-modal-title .strat-badge {
-            font-family: 'DM Sans', sans-serif; font-size: 0.65rem; font-weight: 700;
-            padding: 2px 8px; background: var(--accent); color: white;
-            border-radius: 20px; letter-spacing: 0.06em; text-transform: uppercase;
+            font-family: 'Fraunces', serif; font-size: 1.15rem; font-weight: 500;
         }
         .optimize-modal-close {
-            width: 32px; height: 32px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.2);
-            background: rgba(255,255,255,0.08); cursor: pointer; font-size: 1rem; display: flex;
-            align-items: center; justify-content: center; color: rgba(255,255,255,0.6);
+            width: 32px; height: 32px; border-radius: 8px; border: 1px solid var(--border);
+            background: white; cursor: pointer; font-size: 1rem; display: flex;
+            align-items: center; justify-content: center; color: var(--muted);
             transition: all 0.15s;
         }
-        .optimize-modal-close:hover { background: rgba(255,255,255,0.15); color: white; }
+        .optimize-modal-close:hover { border-color: var(--ink); color: var(--ink); }
         .optimize-modal-body {
             padding: 1.5rem; overflow-y: auto; flex: 1;
         }
-        .strategy-section { margin-bottom: 1.5rem; }
-        .strategy-section:last-child { margin-bottom: 0; }
-        .strategy-section-label {
-            font-size: 0.7rem; font-weight: 700; letter-spacing: 0.1em;
-            text-transform: uppercase; color: var(--muted); margin-bottom: 0.6rem;
-            display: flex; align-items: center; gap: 0.5rem;
-        }
-        .strategy-logic {
+        .optimize-result {
             font-family: 'DM Sans', sans-serif; font-size: 0.88rem;
-            line-height: 1.75; color: var(--ink); white-space: pre-wrap;
+            line-height: 1.7; color: var(--ink); white-space: pre-wrap;
             background: var(--paper); border: 1px solid var(--border);
             border-radius: 10px; padding: 1.25rem;
-        }
-        .strategy-table {
-            width: 100%; border-collapse: collapse;
-            border: 1px solid var(--border); border-radius: 10px; overflow: hidden;
-        }
-        .strategy-table th {
-            background: var(--cream); padding: 0.65rem 1rem;
-            font-size: 0.72rem; font-weight: 700; letter-spacing: 0.08em;
-            text-transform: uppercase; color: var(--muted); text-align: left;
-            border-bottom: 1px solid var(--border);
-        }
-        .strategy-table td {
-            padding: 0.65rem 1rem; font-size: 0.85rem; border-bottom: 1px solid var(--border-light);
-            vertical-align: top;
-        }
-        .strategy-table tr:last-child td { border-bottom: none; }
-        .strategy-table .param-name { font-weight: 600; color: var(--ink); white-space: nowrap; width: 140px; }
-        .strategy-table .current-val { color: var(--muted); }
-        .strategy-table .new-val { color: var(--accent); font-weight: 600; }
-        .strategy-table .changed-row { background: rgba(192, 68, 30, 0.04); }
-        .strategy-tone-desc {
-            display: block; font-size: 0.78rem; font-weight: 400;
-            color: var(--muted); margin-top: 3px; font-style: italic;
         }
         .optimize-modal-footer {
             padding: 1rem 1.5rem; border-top: 1px solid var(--border);
@@ -413,10 +377,6 @@
             background: var(--accent); color: white; border-color: var(--accent);
         }
         .btn-modal.primary:hover { background: var(--accent-hover); }
-        .btn-modal.success {
-            background: var(--green); color: white; border-color: var(--green);
-        }
-        .btn-modal.success:hover { background: #166b3d; }
 
         /* Humanize loading overlay */
         .humanize-overlay {
@@ -770,7 +730,7 @@
 <div class="topbar">
     <div class="topbar-brand">
         SEO Blog <span class="accent">Studio</span>
-        <div class="topbar-pill">Powered by Crontools</div>
+        <div class="topbar-pill">Powered by Claude Sonnet 4</div>
     </div>
     <div class="topbar-steps">
         <div class="step-dot active" id="step1"><div class="dot"></div>Configure</div>
@@ -990,7 +950,7 @@
             <span id="btnText">✦ Generate SEO Blog Post</span>
         </button>
         <button class="btn-optimize" id="optimizeBtn" onclick="optimizePrompt()">
-            ⚡ Strategist: Optimize Inputs
+            ⚡ Optimize Prompt
         </button>
         <div class="generate-hint">Takes 30–90 seconds &middot; Uses Claude Sonnet 4</div>
     </div>
@@ -1114,7 +1074,7 @@
         </div>
         <div class="chat-messages" id="chatMessages">
             <div class="chat-msg assistant">
-                Blog generated! I already have your full blog and all inputs. Ask me to edit anything, rewrite a section, improve the hook, adjust the tone, tighten the conclusion, or update a specific paragraph. You can also select text in the blog and ask me to improve just that part.
+                👋 Blog generated! Ask me to edit anything — rewrite a section, improve the hook, adjust the tone, tighten the conclusion, or update a specific paragraph. You can also select text in the blog and ask me to improve just that part.
             </div>
         </div>
         <div class="chat-typing" id="chatTyping">
@@ -1143,22 +1103,19 @@
     </div>
 </div>
 
-<!-- SEO Strategy Brief Modal -->
+<!-- Optimize Prompt Modal -->
 <div class="optimize-modal-overlay" id="optimizeModal">
     <div class="optimize-modal">
         <div class="optimize-modal-header">
-            <div class="optimize-modal-title">SEO Strategy Brief <span class="strat-badge">Lead Strategist</span></div>
+            <div class="optimize-modal-title">Optimized Prompt</div>
             <button class="optimize-modal-close" onclick="closeOptimizeModal()">✕</button>
         </div>
-        <div class="optimize-modal-body" id="strategyModalBody">
-            <div class="strategy-section">
-                <div class="strategy-section-label">⏳ Analyzing...</div>
-                <div class="strategy-logic">The Lead SEO Strategist is analyzing your topic, keywords, and competitive landscape to dictate the winning parameters...</div>
-            </div>
+        <div class="optimize-modal-body">
+            <div class="optimize-result" id="optimizeResult">Analyzing your inputs...</div>
         </div>
         <div class="optimize-modal-footer">
             <button class="btn-modal" onclick="closeOptimizeModal()">Close</button>
-            <button class="btn-modal success" id="applyStrategyBtn" onclick="applyStrategy()" style="display:none">✦ Apply Strategy</button>
+            <button class="btn-modal primary" onclick="copyOptimizedPrompt()">⎘ Copy Prompt</button>
         </div>
     </div>
 </div>
@@ -1545,7 +1502,7 @@ function onTextSelect() {
         selectedText = sel.toString().trim();
         const chatInput = document.getElementById('chatInput');
         if (chatInput.value === '') {
-            chatInput.value = `Improve this passage:\n\n"${selectedText.slice(0,300)}${selectedText.length > 300 ? '...' : ''}"`;
+            chatInput.value = `Improve this passage:\n\n"${selectedText.slice(0,300)}${selectedText.length > 300 ? '…' : ''}"`;
             autoResizeChat(chatInput);
         }
         // Make sure chat is visible and focus input
@@ -1567,7 +1524,7 @@ function toggleChat() {
 function clearChat() {
     chatHistory = [];
     const msgs = document.getElementById('chatMessages');
-    msgs.innerHTML = `<div class="chat-msg assistant">Chat cleared. I still have the full blog and your original brief. Ask me to edit anything.</div>`;
+    msgs.innerHTML = `<div class="chat-msg assistant">Chat cleared. Ask me to edit the blog — I still have full context of the content and original brief.</div>`;
     document.getElementById('applyBanner').classList.remove('visible');
     pendingBlogContent = '';
     document.getElementById('applyFullBtn').style.display = 'none';
@@ -1699,7 +1656,7 @@ function computeLocalSeoScore(md) {
     const wordCount = words.length;
 
     document.getElementById('tab-pill-blog').textContent = wordCount.toLocaleString() + 'w';
-    document.getElementById('tab-pill-images').textContent = imgSpots || '-';
+    document.getElementById('tab-pill-images').textContent = imgSpots || '—';
 }
 
 // ===== HUMANIZE CONTENT =====
@@ -1752,9 +1709,7 @@ async function humanizeContent() {
     }
 }
 
-// ===== THE STRATEGIST: OPTIMIZE INPUTS =====
-let pendingStrategy = null;
-
+// ===== OPTIMIZE PROMPT =====
 async function optimizePrompt() {
     const btn = document.getElementById('optimizeBtn');
     const topic = document.getElementById('topic').value.trim();
@@ -1762,21 +1717,17 @@ async function optimizePrompt() {
     if (!topic && !primaryKw) { alert('Please fill in at least a Topic or Primary Keyword first.'); return; }
 
     btn.disabled = true;
-    btn.innerHTML = '⏳ Strategist analyzing...';
+    btn.innerHTML = '⏳ Analyzing...';
 
-    // Show modal with loading state
-    document.getElementById('strategyModalBody').innerHTML = `
-        <div class="strategy-section">
-            <div class="strategy-section-label">⏳ Analyzing competitive landscape...</div>
-            <div class="strategy-logic">The Lead SEO Strategist is studying your topic, keywords, and competitive landscape to dictate the exact parameters needed to beat the top 3 results on Google...</div>
-        </div>`;
-    document.getElementById('applyStrategyBtn').style.display = 'none';
+    // Show modal immediately with loading state
+    document.getElementById('optimizeResult').textContent = 'Analyzing your inputs and crafting an optimized prompt...';
     document.getElementById('optimizeModal').classList.add('visible');
 
     const intents = Array.from(document.querySelectorAll('input[name="intent"]:checked')).map(cb => cb.value);
 
     const payload = {
-        topic, primary_keyword: primaryKw,
+        topic: topic,
+        primary_keyword: primaryKw,
         secondary_keywords: document.getElementById('secondary_keywords').value,
         search_intents: intents,
         content_type: document.getElementById('content_type').value,
@@ -1800,155 +1751,29 @@ async function optimizePrompt() {
         const data = await res.json();
 
         if (data.error) {
-            document.getElementById('strategyModalBody').innerHTML = `
-                <div class="strategy-section">
-                    <div class="strategy-section-label">⚠ Error</div>
-                    <div class="strategy-logic" style="color:var(--red)">${data.error}${data.raw ? '\n\nRaw response:\n' + data.raw : ''}</div>
-                </div>`;
-            return;
+            document.getElementById('optimizeResult').textContent = 'Error: ' + data.error;
+        } else {
+            document.getElementById('optimizeResult').textContent = data.result;
         }
-
-        const s = data.strategy;
-        pendingStrategy = s;
-
-        // Get current values for comparison
-        const currentTone = document.querySelector('input[name="tone"]:checked')?.value || '';
-        const currentWc = document.querySelector('input[name="wc"]:checked')?.value || '';
-        const currentAudience = document.getElementById('target_audience').value || '(not set)';
-        const currentCtype = document.getElementById('content_type').value || '';
-        const currentCta = document.getElementById('cta_goal').value || '(not set)';
-
-        // Format tone labels for display
-        const toneLabels = {
-            'authoritative-conversational': 'Expert & Conversational',
-            'friendly-approachable': 'Friendly & Approachable',
-            'bold-direct': 'Bold & Direct',
-            'formal-professional': 'Formal & Professional',
-            'storytelling-narrative': 'Story-Driven',
-            'witty-engaging': 'Witty & Engaging'
-        };
-        const ctypeLabels = {
-            'comprehensive-guide': 'Comprehensive Guide', 'how-to-guide': 'How-To Guide',
-            'listicle': 'Listicle', 'comparison': 'Comparison', 'case-study': 'Case Study',
-            'opinion-thought-leadership': 'Thought Leadership', 'product-review': 'Product Review',
-            'news-roundup': 'News Roundup', 'faq-page': 'FAQ Page', 'pillar-page': 'Pillar Page'
-        };
-
-        const isChanged = (a, b) => a !== b;
-        const rowClass = (a, b) => isChanged(a, b) ? 'changed-row' : '';
-
-        document.getElementById('strategyModalBody').innerHTML = `
-            <div class="strategy-section">
-                <div class="strategy-section-label">🧠 Ranking Logic</div>
-                <div class="strategy-logic">${(s.ranking_logic || 'No ranking logic provided.').replace(/\n/g, '<br>')}</div>
-            </div>
-            <div class="strategy-section">
-                <div class="strategy-section-label">📊 Recommended Changes</div>
-                <table class="strategy-table">
-                    <thead><tr><th>Parameter</th><th>Current</th><th>Strategist Recommends</th></tr></thead>
-                    <tbody>
-                        <tr class="${rowClass(currentTone, s.tone)}">
-                            <td class="param-name">Tone</td>
-                            <td class="current-val">${toneLabels[currentTone] || currentTone}</td>
-                            <td class="new-val">${toneLabels[s.tone] || s.tone}${s.tone_descriptor ? '<span class="strategy-tone-desc">Persona: ' + s.tone_descriptor + '</span>' : ''}</td>
-                        </tr>
-                        <tr class="${rowClass(currentWc, s.word_count)}">
-                            <td class="param-name">Word Count</td>
-                            <td class="current-val">${currentWc}</td>
-                            <td class="new-val">${s.word_count}</td>
-                        </tr>
-                        <tr class="${rowClass(currentAudience, s.target_audience)}">
-                            <td class="param-name">Target Audience</td>
-                            <td class="current-val">${currentAudience}</td>
-                            <td class="new-val">${s.target_audience}</td>
-                        </tr>
-                        <tr class="${rowClass(currentCtype, s.content_type)}">
-                            <td class="param-name">Content Type</td>
-                            <td class="current-val">${ctypeLabels[currentCtype] || currentCtype}</td>
-                            <td class="new-val">${ctypeLabels[s.content_type] || s.content_type}</td>
-                        </tr>
-                        <tr class="${rowClass(currentCta, s.cta_goal)}">
-                            <td class="param-name">CTA Goal</td>
-                            <td class="current-val">${currentCta}</td>
-                            <td class="new-val">${s.cta_goal}</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-            ${s.prompt_instructions ? `
-            <div class="strategy-section">
-                <div class="strategy-section-label">✍ Strategic Writing Instructions</div>
-                <div class="strategy-logic">${s.prompt_instructions.replace(/\n/g, '<br>')}</div>
-            </div>` : ''}
-        `;
-
-        // Show Apply button
-        document.getElementById('applyStrategyBtn').style.display = 'inline-flex';
 
     } catch(e) {
-        document.getElementById('strategyModalBody').innerHTML = `
-            <div class="strategy-section">
-                <div class="strategy-section-label">⚠ Error</div>
-                <div class="strategy-logic" style="color:var(--red)">Request failed: ${e.message}</div>
-            </div>`;
+        document.getElementById('optimizeResult').textContent = 'Request failed: ' + e.message;
     } finally {
         btn.disabled = false;
-        btn.innerHTML = '⚡ Strategist: Optimize Inputs';
+        btn.innerHTML = '⚡ Optimize Prompt';
     }
-}
-
-function applyStrategy() {
-    if (!pendingStrategy) return;
-    const s = pendingStrategy;
-
-    // Apply Tone
-    if (s.tone) {
-        const toneRadio = document.querySelector(`input[name="tone"][value="${s.tone}"]`);
-        if (toneRadio) toneRadio.checked = true;
-    }
-
-    // Apply Word Count
-    if (s.word_count) {
-        const wcRadio = document.querySelector(`input[name="wc"][value="${s.word_count}"]`);
-        if (wcRadio) wcRadio.checked = true;
-    }
-
-    // Apply Target Audience
-    if (s.target_audience) {
-        document.getElementById('target_audience').value = s.target_audience;
-    }
-
-    // Apply Content Type
-    if (s.content_type) {
-        const ctSelect = document.getElementById('content_type');
-        const optExists = Array.from(ctSelect.options).some(o => o.value === s.content_type);
-        if (optExists) ctSelect.value = s.content_type;
-    }
-
-    // Apply CTA Goal
-    if (s.cta_goal) {
-        document.getElementById('cta_goal').value = s.cta_goal;
-    }
-
-    // Apply Special Instructions (append, don't overwrite)
-    if (s.prompt_instructions) {
-        const piEl = document.getElementById('prompt_instructions');
-        const existing = piEl.value.trim();
-        if (existing) {
-            piEl.value = existing + '\n\n--- STRATEGIST INSTRUCTIONS ---\n' + s.prompt_instructions;
-        } else {
-            piEl.value = s.prompt_instructions;
-        }
-    }
-
-    updateProgress();
-    closeOptimizeModal();
-    pendingStrategy = null;
-    showToast('Strategy applied - inputs optimized');
 }
 
 function closeOptimizeModal() {
     document.getElementById('optimizeModal').classList.remove('visible');
+}
+
+async function copyOptimizedPrompt() {
+    const text = document.getElementById('optimizeResult').textContent;
+    try {
+        await navigator.clipboard.writeText(text);
+        showToast('Optimized prompt copied');
+    } catch(e) { alert('Copy failed: ' + e.message); }
 }
 
 // Close modal on overlay click
