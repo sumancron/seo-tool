@@ -1,0 +1,29 @@
+{
+  "MHEBazar": {
+    "company_context": "B2B+B2C multi-vendor marketplace for material handling equipment (MHE). Connects buyers with vendors for new, used, rental equipment, spare parts, services, and training. Covers forklifts, pallet trucks, cranes, stackers, batteries, attachments. Part of Greentech India Material Handling LLP. Strong focus on lithium-ion battery solutions and conversions for higher efficiency, low maintenance, and cost savings. One-stop platform for complete MHE lifecycle.",
+    
+    "target_audience": "warehouse owners, logistics companies, factory managers, procurement heads, industrial buyers, rental providers, MHE dealers",
+    
+    "cta_goal": "generate enquiries, request quotes, connect buyers with vendors",
+    
+    "requirement": "focus on buying guides, equipment comparison, cost vs ROI, rental vs purchase decisions, maintenance, spare parts, operational efficiency. push enquiry actions",
+    
+    "prompt_instructions": "tone: practical, industrial, no fluff. use real use-cases (warehouse, logistics). highlight downtime, cost savings, productivity. compare options (new vs used vs rental). guide user to enquire",
+    
+    "internal_links": "/used, /rental, /spare-parts, /vendor-listing, /contact-us, /blogs"
+  },
+
+  "Cronbay Technologies": {
+    "company_context": "ROI-driven digital marketing agency (est. 2017) based in Bangalore. Focus on performance marketing, SEO, PPC, social media, branding, app marketing, and lead generation. Works across B2B, D2C, SaaS, ecommerce, fintech, real estate. Known for data-driven campaigns, programmatic ads, and scaling brands via Google Ads, Meta Ads, and organic growth. Delivers measurable results like higher ROAS, traffic, conversions, and lead flow.",
+    
+    "target_audience": "Startup founders, SMEs, D2C brands, SaaS companies, ecommerce businesses, marketing heads, companies struggling with low ROI, poor visibility, or inconsistent leads.",
+    
+    "cta_goal": "Book consultation, request audit, generate qualified leads for digital marketing services.",
+    
+    "requirement": "Focus on ROI, lead generation, scaling, and performance marketing. Content should highlight real results (traffic, ROAS, conversions), pain points (low ROI, bad ads, no leads), and solutions (SEO, PPC, funnels). Push toward consultation.",
+    
+    "prompt_instructions": "Tone: sharp, performance-driven. Use metrics (ROAS, CAC, CTR). Show problems like wasted ad spend, low visibility. Give actionable strategies. Avoid generic tips. Always position Cronbay as growth partner.",
+    
+    "internal_links": "/seo-services, /ppc-management-services, /branding-and-marketing, /retention-marketing, /mobile-marketing, /contact-us, /blogs"
+  }
+}

@@ -1,0 +1,1964 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SEO Blog Studio</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,700;1,9..144,300;1,9..144,500&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <style>
+        :root {
+            --ink: #141210;
+            --paper: #f7f4ef;
+            --cream: #ede8e0;
+            --accent: #007ad1;
+            --accent-hover: #0798ff;
+            --accent-light: #f5e4de;
+            --muted: #8c887f;
+            --muted2: #b5b0a7;
+            --border: #ddd8cf;
+            --border-light: #eae6df;
+            --surface: #ffffff;
+            --green: #1e7a4a;
+            --green-light: #ddf0e8;
+            --amber: #1f97ff;
+            --amber-light: #fef3de;
+            --red: #0025a9;
+            --red-light: #fde8e4;
+            --blue: #1a56a0;
+            --blue-light: #ddeeff;
+            --panel-w: 480px;
+            --chat-h: 380px;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--paper);
+            color: var(--ink);
+            min-height: 100vh;
+            font-size: 14.5px;
+            line-height: 1.5;
+        }
+
+        /* ===== TOPBAR ===== */
+        .topbar {
+            position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+            background: var(--ink);
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 1.75rem;
+            height: 54px;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+        }
+        .topbar-brand {
+            font-family: 'Fraunces', serif;
+            font-size: 1.2rem;
+            color: #fff;
+            display: flex; align-items: center; gap: 0.6rem;
+            font-weight: 300;
+        }
+        .topbar-brand .accent { color: var(--accent); font-style: italic; font-weight: 500; }
+        .topbar-pill {
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.12);
+            color: rgba(255,255,255,0.55);
+            font-size: 0.7rem; font-weight: 600;
+            letter-spacing: 0.1em; text-transform: uppercase;
+            padding: 3px 10px; border-radius: 20px;
+        }
+        .topbar-steps { display: flex; align-items: center; gap: 0.5rem; }
+        .step-dot {
+            display: flex; align-items: center; gap: 0.4rem;
+            font-size: 0.75rem; font-weight: 500;
+            color: rgba(255,255,255,0.3); transition: color 0.2s;
+        }
+        .step-dot.active { color: rgba(255,255,255,0.85); }
+        .step-dot .dot {
+            width: 6px; height: 6px; border-radius: 50%;
+            background: rgba(255,255,255,0.2); transition: background 0.2s;
+        }
+        .step-dot.active .dot { background: var(--accent); }
+        .step-sep { color: rgba(255,255,255,0.15); font-size: 0.8rem; }
+
+        /* ===== LAYOUT ===== */
+        .app {
+            margin-top: 54px;
+            display: grid;
+            grid-template-columns: var(--panel-w) 1fr;
+            min-height: calc(100vh - 54px);
+        }
+
+        /* ===== LEFT PANEL ===== */
+        .form-panel {
+            background: var(--surface);
+            border-right: 1px solid var(--border);
+            overflow-y: auto;
+            height: calc(100vh - 54px);
+            position: sticky;
+            top: 54px;
+        }
+        .form-panel::-webkit-scrollbar { width: 4px; }
+        .form-panel::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+        .panel-header {
+            padding: 1.25rem 1.75rem 1rem;
+            background: var(--cream);
+            border-bottom: 1px solid var(--border);
+            position: sticky; top: 0; z-index: 10;
+        }
+        .panel-header-top {
+            display: flex; align-items: flex-start; justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+        .panel-title { font-family: 'Fraunces', serif; font-size: 1.2rem; font-weight: 500; color: var(--ink); }
+        .panel-subtitle { font-size: 0.78rem; color: var(--muted); margin-top: 2px; }
+        .char-counter {
+            font-size: 0.72rem; color: var(--muted2);
+            background: var(--border-light); border-radius: 20px;
+            padding: 2px 8px; font-weight: 500;
+        }
+        .progress-bar {
+            height: 2px; background: var(--border); border-radius: 2px;
+            margin-top: 0.75rem; overflow: hidden;
+        }
+        .progress-fill { height: 100%; background: var(--accent); border-radius: 2px; width: 0%; transition: width 0.3s; }
+
+        /* ===== COMPANY BAR ===== */
+        .company-bar {
+            padding: 0.75rem 1.75rem;
+            background: var(--blue-light);
+            border-bottom: 1px solid #c5ddf5;
+            display: flex; align-items: center; gap: 0.6rem;
+        }
+        .company-bar label {
+            font-size: 0.72rem; font-weight: 700; letter-spacing: 0.08em;
+            text-transform: uppercase; color: var(--blue); white-space: nowrap;
+        }
+        .company-select {
+            flex: 1; border: 1.5px solid #c5ddf5; border-radius: 7px;
+            padding: 7px 10px; font-family: 'DM Sans', sans-serif;
+            font-size: 0.83rem; background: white; color: var(--ink);
+            outline: none; cursor: pointer;
+        }
+        .company-select:focus { border-color: var(--blue); }
+        .btn-company {
+            padding: 7px 12px; border-radius: 7px; border: 1.5px solid #c5ddf5;
+            background: white; color: var(--blue);
+            font-family: 'DM Sans', sans-serif; font-size: 0.78rem; font-weight: 600;
+            cursor: pointer; transition: all 0.15s; white-space: nowrap;
+        }
+        .btn-company:hover { background: var(--blue); color: white; border-color: var(--blue); }
+        .btn-company.danger { color: var(--red); border-color: #f5c5c5; }
+        .btn-company.danger:hover { background: var(--red); color: white; border-color: var(--red); }
+
+        /* Save company name input (shown inline) */
+        .save-name-row {
+            display: none; padding: 0.6rem 1.75rem;
+            background: var(--blue-light); border-bottom: 1px solid #c5ddf5;
+            gap: 0.5rem; align-items: center;
+        }
+        .save-name-row.visible { display: flex; }
+        .save-name-input {
+            flex: 1; border: 1.5px solid #c5ddf5; border-radius: 7px;
+            padding: 7px 10px; font-family: 'DM Sans', sans-serif;
+            font-size: 0.83rem; background: white; color: var(--ink); outline: none;
+        }
+        .save-name-input:focus { border-color: var(--blue); }
+        .btn-save-confirm {
+            padding: 7px 14px; border-radius: 7px; border: none;
+            background: var(--blue); color: white;
+            font-family: 'DM Sans', sans-serif; font-size: 0.78rem; font-weight: 600;
+            cursor: pointer;
+        }
+        .btn-save-cancel {
+            padding: 7px 10px; border-radius: 7px;
+            border: 1.5px solid var(--border); background: white; color: var(--muted);
+            font-family: 'DM Sans', sans-serif; font-size: 0.78rem; cursor: pointer;
+        }
+
+        .form-body { padding: 1.25rem 1.75rem 2rem; }
+
+        /* ===== FORM SECTIONS ===== */
+        .form-section {
+            margin-bottom: 1.75rem; padding-bottom: 1.75rem;
+            border-bottom: 1px solid var(--border-light);
+        }
+        .form-section:last-of-type { border-bottom: none; margin-bottom: 0.5rem; }
+        .section-header { display: flex; align-items: center; gap: 0.6rem; margin-bottom: 1rem; }
+        .section-icon {
+            width: 26px; height: 26px; background: var(--accent-light);
+            border-radius: 6px; display: flex; align-items: center; justify-content: center;
+            font-size: 0.85rem; flex-shrink: 0;
+        }
+        .section-title {
+            font-size: 0.72rem; font-weight: 700; letter-spacing: 0.12em;
+            text-transform: uppercase; color: var(--muted);
+        }
+
+        /* ===== FIELDS ===== */
+        .field { margin-bottom: 1rem; }
+        .field:last-child { margin-bottom: 0; }
+        .field-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 5px; }
+        .field label { display: block; font-size: 0.8rem; font-weight: 600; color: #44403b; }
+        .field-hint { font-size: 0.71rem; color: var(--muted2); }
+        .required-dot {
+            display: inline-block; width: 5px; height: 5px; border-radius: 50%;
+            background: var(--accent); margin-left: 4px; vertical-align: middle; position: relative; top: -1px;
+        }
+        .field input[type="text"], .field input[type="url"], .field select, .field textarea {
+            width: 100%; border: 1.5px solid var(--border); border-radius: 8px;
+            padding: 10px 13px; font-family: 'DM Sans', sans-serif; font-size: 0.875rem;
+            color: var(--ink); background: var(--paper);
+            transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
+            resize: vertical; outline: none; line-height: 1.5;
+        }
+        .field input[type="text"]:focus, .field input[type="url"]:focus,
+        .field select:focus, .field textarea:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(192, 68, 30, 0.09);
+            background: #fff;
+        }
+        .field textarea { min-height: 100px; }
+        .field textarea.sm { min-height: 80px; }
+        .field textarea.md { min-height: 140px; }
+        .field textarea.lg { min-height: 200px; }
+        .field textarea.xl { min-height: 260px; }
+        .field select { cursor: pointer; }
+        .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+        .grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.6rem; }
+
+        /* ===== INTENT CHECKBOXES ===== */
+        .intent-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; }
+        .intent-item { position: relative; }
+        .intent-item input[type="checkbox"] { position: absolute; opacity: 0; width: 0; height: 0; }
+        .intent-label {
+            display: flex; align-items: center; gap: 0.5rem;
+            padding: 9px 12px; border: 1.5px solid var(--border);
+            border-radius: 8px; cursor: pointer; background: var(--paper);
+            transition: all 0.15s; font-size: 0.82rem; font-weight: 500;
+            user-select: none; color: #55524d;
+        }
+        .intent-label:hover { border-color: var(--accent); background: var(--accent-light); }
+        .intent-item input:checked + .intent-label { border-color: var(--accent); background: var(--accent-light); color: var(--accent); font-weight: 600; }
+        .intent-check {
+            width: 16px; height: 16px; border: 2px solid var(--border);
+            border-radius: 4px; display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0; transition: all 0.15s; font-size: 0.65rem;
+        }
+        .intent-item input:checked + .intent-label .intent-check { background: var(--accent); border-color: var(--accent); color: white; }
+        .intent-icon { font-size: 0.9rem; }
+        .intent-info { display: flex; flex-direction: column; gap: 1px; }
+        .intent-name { font-size: 0.8rem; font-weight: 600; }
+        .intent-desc { font-size: 0.68rem; font-weight: 400; opacity: 0.7; }
+
+        /* ===== TONE SELECTOR ===== */
+        .tone-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.45rem; }
+        .tone-item { position: relative; }
+        .tone-item input { position: absolute; opacity: 0; width: 0; height: 0; }
+        .tone-btn {
+            display: block; padding: 8px 10px; border: 1.5px solid var(--border);
+            border-radius: 7px; text-align: center; cursor: pointer;
+            font-size: 0.75rem; font-weight: 500; color: #55524d;
+            background: var(--paper); transition: all 0.15s; user-select: none;
+        }
+        .tone-btn:hover { border-color: var(--accent); color: var(--accent); }
+        .tone-item input:checked + .tone-btn { border-color: var(--accent); background: var(--accent-light); color: var(--accent); font-weight: 700; }
+
+        /* ===== WORD COUNT ===== */
+        .wc-options { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.4rem; }
+        .wc-item { position: relative; }
+        .wc-item input { position: absolute; opacity: 0; width: 0; height: 0; }
+        .wc-btn {
+            display: block; padding: 8px 6px; border: 1.5px solid var(--border);
+            border-radius: 7px; text-align: center; cursor: pointer;
+            font-size: 0.73rem; font-weight: 500; color: #55524d;
+            background: var(--paper); transition: all 0.15s; user-select: none;
+        }
+        .wc-btn:hover { border-color: var(--accent); }
+        .wc-item input:checked + .wc-btn { border-color: var(--accent); background: var(--accent-light); color: var(--accent); font-weight: 700; }
+
+        /* ===== GENERATE BUTTON ===== */
+        .generate-wrap {
+            padding: 1rem 1.75rem 1.5rem;
+            position: sticky; bottom: 0;
+            background: linear-gradient(to bottom, transparent, var(--surface) 30%);
+            z-index: 5;
+        }
+        .btn-generate {
+            width: 100%; padding: 15px 20px;
+            background: var(--accent); color: white;
+            border: none; border-radius: 10px;
+            font-family: 'DM Sans', sans-serif; font-size: 1rem; font-weight: 700;
+            cursor: pointer; transition: all 0.2s;
+            display: flex; align-items: center; justify-content: center; gap: 0.5rem;
+        }
+        .btn-generate:hover:not(:disabled) { background: var(--accent-hover); transform: translateY(-1px); box-shadow: 0 4px 16px rgba(192,68,30,0.25); }
+        .btn-generate:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+        .generate-hint { font-size: 0.72rem; color: var(--muted2); text-align: center; margin-top: 0.5rem; }
+
+        /* Optimize Prompt Button */
+        .btn-optimize {
+            width: 100%; padding: 12px 20px; margin-top: 0.5rem;
+            background: transparent; color: var(--accent);
+            border: 1.5px solid var(--accent); border-radius: 10px;
+            font-family: 'DM Sans', sans-serif; font-size: 0.88rem; font-weight: 700;
+            cursor: pointer; transition: all 0.2s;
+            display: flex; align-items: center; justify-content: center; gap: 0.5rem;
+        }
+        .btn-optimize:hover:not(:disabled) { background: var(--accent-light); transform: translateY(-1px); }
+        .btn-optimize:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+        /* Humanize Button */
+        .humanize-btn {
+            padding: 7px 14px; border: 1.5px solid var(--green);
+            border-radius: 7px; background: var(--green-light);
+            font-family: 'DM Sans', sans-serif; font-size: 0.78rem; font-weight: 700;
+            color: var(--green); cursor: pointer; transition: all 0.15s;
+        }
+        .humanize-btn:hover:not(:disabled) { background: var(--green); color: white; border-color: var(--green); }
+        .humanize-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .humanize-btn.active {
+            background: var(--green); color: white; border-color: var(--green);
+            animation: pulse-green 1.5s ease-in-out infinite;
+        }
+        @keyframes pulse-green {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(30, 122, 74, 0.3); }
+            50% { box-shadow: 0 0 0 6px rgba(30, 122, 74, 0); }
+        }
+
+        /* Strategy Modal */
+        .optimize-modal-overlay {
+            position: fixed; inset: 0; z-index: 500;
+            background: rgba(20, 18, 16, 0.6); backdrop-filter: blur(4px);
+            display: none; align-items: center; justify-content: center;
+        }
+        .optimize-modal-overlay.visible { display: flex; }
+        .optimize-modal {
+            background: var(--surface); border-radius: 16px;
+            width: min(740px, 92vw); max-height: 85vh;
+            box-shadow: 0 24px 80px rgba(0,0,0,0.25);
+            display: flex; flex-direction: column; overflow: hidden;
+        }
+        .optimize-modal-header {
+            padding: 1.25rem 1.5rem; background: var(--ink);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .optimize-modal-title {
+            font-family: 'Fraunces', serif; font-size: 1.15rem; font-weight: 500; color: #fff;
+            display: flex; align-items: center; gap: 0.6rem;
+        }
+        .optimize-modal-title .strat-badge {
+            font-family: 'DM Sans', sans-serif; font-size: 0.65rem; font-weight: 700;
+            padding: 2px 8px; background: var(--accent); color: white;
+            border-radius: 20px; letter-spacing: 0.06em; text-transform: uppercase;
+        }
+        .optimize-modal-close {
+            width: 32px; height: 32px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.2);
+            background: rgba(255,255,255,0.08); cursor: pointer; font-size: 1rem; display: flex;
+            align-items: center; justify-content: center; color: rgba(255,255,255,0.6);
+            transition: all 0.15s;
+        }
+        .optimize-modal-close:hover { background: rgba(255,255,255,0.15); color: white; }
+        .optimize-modal-body {
+            padding: 1.5rem; overflow-y: auto; flex: 1;
+        }
+        .strategy-section { margin-bottom: 1.5rem; }
+        .strategy-section:last-child { margin-bottom: 0; }
+        .strategy-section-label {
+            font-size: 0.7rem; font-weight: 700; letter-spacing: 0.1em;
+            text-transform: uppercase; color: var(--muted); margin-bottom: 0.6rem;
+            display: flex; align-items: center; gap: 0.5rem;
+        }
+        .strategy-logic {
+            font-family: 'DM Sans', sans-serif; font-size: 0.88rem;
+            line-height: 1.75; color: var(--ink); white-space: pre-wrap;
+            background: var(--paper); border: 1px solid var(--border);
+            border-radius: 10px; padding: 1.25rem;
+        }
+        .strategy-table {
+            width: 100%; border-collapse: collapse;
+            border: 1px solid var(--border); border-radius: 10px; overflow: hidden;
+        }
+        .strategy-table th {
+            background: var(--cream); padding: 0.65rem 1rem;
+            font-size: 0.72rem; font-weight: 700; letter-spacing: 0.08em;
+            text-transform: uppercase; color: var(--muted); text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+        .strategy-table td {
+            padding: 0.65rem 1rem; font-size: 0.85rem; border-bottom: 1px solid var(--border-light);
+            vertical-align: top;
+        }
+        .strategy-table tr:last-child td { border-bottom: none; }
+        .strategy-table .param-name { font-weight: 600; color: var(--ink); white-space: nowrap; width: 140px; }
+        .strategy-table .current-val { color: var(--muted); }
+        .strategy-table .new-val { color: var(--accent); font-weight: 600; }
+        .strategy-table .changed-row { background: rgba(192, 68, 30, 0.04); }
+        .strategy-tone-desc {
+            display: block; font-size: 0.78rem; font-weight: 400;
+            color: var(--muted); margin-top: 3px; font-style: italic;
+        }
+        .optimize-modal-footer {
+            padding: 1rem 1.5rem; border-top: 1px solid var(--border);
+            display: flex; gap: 0.5rem; justify-content: flex-end;
+        }
+        .btn-modal {
+            padding: 9px 18px; border-radius: 8px; border: 1.5px solid var(--border);
+            background: white; font-family: 'DM Sans', sans-serif;
+            font-size: 0.82rem; font-weight: 600; cursor: pointer; transition: all 0.15s;
+            color: var(--muted);
+        }
+        .btn-modal:hover { border-color: var(--ink); color: var(--ink); }
+        .btn-modal.primary {
+            background: var(--accent); color: white; border-color: var(--accent);
+        }
+        .btn-modal.primary:hover { background: var(--accent-hover); }
+        .btn-modal.success {
+            background: var(--green); color: white; border-color: var(--green);
+        }
+        .btn-modal.success:hover { background: #166b3d; }
+
+        /* Humanize loading overlay */
+        .humanize-overlay {
+            position: fixed; inset: 54px 0 0 var(--panel-w); z-index: 100;
+            background: rgba(247,244,239,0.96); backdrop-filter: blur(6px);
+            display: none; flex-direction: column; align-items: center; justify-content: center; gap: 1.5rem;
+        }
+        .humanize-overlay.visible { display: flex; }
+        .humanize-progress {
+            width: 240px; height: 4px; background: var(--border);
+            border-radius: 4px; overflow: hidden;
+        }
+        .humanize-progress-fill {
+            height: 100%; width: 0%; background: var(--green);
+            border-radius: 4px; transition: width 0.5s ease;
+            animation: humanize-fill 45s ease-out forwards;
+        }
+        @keyframes humanize-fill {
+            0% { width: 0%; }
+            30% { width: 40%; }
+            60% { width: 65%; }
+            85% { width: 80%; }
+            100% { width: 92%; }
+        }
+
+        /* ===== LOADING OVERLAY ===== */
+        .loading-overlay {
+            position: fixed; inset: 54px 0 0 var(--panel-w); z-index: 100;
+            background: rgba(247,244,239,0.96); backdrop-filter: blur(6px);
+            display: none; flex-direction: column; align-items: center; justify-content: center; gap: 1.5rem;
+        }
+        .loading-overlay.visible { display: flex; }
+        .loader-ring {
+            width: 48px; height: 48px; border: 3px solid var(--border);
+            border-top-color: var(--accent); border-radius: 50%;
+            animation: spin 0.9s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .loading-text { font-family: 'Fraunces', serif; font-size: 1.1rem; font-weight: 300; color: var(--ink); }
+        .loading-steps { display: flex; flex-direction: column; gap: 0.5rem; }
+        .loading-step {
+            display: flex; align-items: center; gap: 0.75rem;
+            font-size: 0.8rem; color: var(--muted2); opacity: 0; transition: opacity 0.4s;
+        }
+        .loading-step.visible { opacity: 1; color: var(--muted); }
+        .loading-step .dot { width: 5px; height: 5px; border-radius: 50%; background: var(--accent); }
+
+        /* ===== RIGHT OUTPUT PANEL ===== */
+        .output-panel {
+            display: flex; flex-direction: column;
+            min-height: calc(100vh - 54px);
+            overflow: hidden;
+        }
+        .output-tabs {
+            display: flex; align-items: center; gap: 0; 
+            padding: 0 1.5rem; background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            position: sticky; top: 54px; z-index: 50;
+        }
+        .tab-btn {
+            padding: 0.9rem 1.1rem; background: none; border: none;
+            font-family: 'DM Sans', sans-serif; font-size: 0.82rem; font-weight: 500;
+            color: var(--muted); cursor: pointer; border-bottom: 2px solid transparent;
+            margin-bottom: -1px; transition: all 0.15s; display: flex; align-items: center; gap: 0.4rem;
+        }
+        .tab-btn:hover { color: var(--ink); }
+        .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); font-weight: 600; }
+        .tab-pill {
+            font-size: 0.65rem; font-weight: 700; padding: 1px 6px;
+            border-radius: 10px; background: var(--border-light); color: var(--muted);
+        }
+        .tab-btn.active .tab-pill { background: var(--accent-light); color: var(--accent); }
+        .tab-panel { display: none; flex: 1; overflow-y: auto; padding: 1.75rem; }
+        .tab-panel.active { display: block; }
+
+        /* ===== EMPTY STATE ===== */
+        .empty-state {
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            min-height: 360px; gap: 0.75rem; text-align: center; color: var(--muted);
+        }
+        .empty-icon { font-size: 2.5rem; opacity: 0.25; }
+        .empty-state h3 { font-family: 'Fraunces', serif; font-size: 1.3rem; font-weight: 300; color: var(--muted); }
+        .empty-state p { font-size: 0.83rem; }
+
+        /* ===== BLOG TOOLBAR ===== */
+        .blog-toolbar {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0.75rem 0; margin-bottom: 1rem;
+            border-bottom: 1px solid var(--border-light);
+        }
+        .stat-chips { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+        .stat-chip {
+            font-size: 0.75rem; padding: 4px 10px; border-radius: 20px;
+            background: var(--cream); color: var(--muted); font-weight: 500;
+        }
+        .toolbar-actions { display: flex; gap: 0.5rem; }
+        .copy-btn {
+            padding: 7px 14px; border: 1.5px solid var(--border);
+            border-radius: 7px; background: var(--surface);
+            font-family: 'DM Sans', sans-serif; font-size: 0.78rem; font-weight: 600;
+            color: var(--muted); cursor: pointer; transition: all 0.15s;
+        }
+        .copy-btn:hover { border-color: var(--ink); color: var(--ink); }
+        .copy-btn.copied { border-color: var(--green); color: var(--green); background: var(--green-light); }
+        .export-btn {
+            padding: 7px 14px; border: 1.5px solid var(--ink);
+            border-radius: 7px; background: var(--ink);
+            font-family: 'DM Sans', sans-serif; font-size: 0.78rem; font-weight: 600;
+            color: white; cursor: pointer; transition: all 0.15s;
+        }
+        .export-btn:hover { background: #2a2724; }
+
+        /* ===== BLOG CONTENT ===== */
+        .blog-content {
+            max-width: 740px; font-size: 1rem; line-height: 1.75;
+            color: var(--ink);
+        }
+        .blog-content h1 { font-family: 'Fraunces', serif; font-size: 2rem; font-weight: 700; line-height: 1.25; margin: 0 0 1.25rem; }
+        .blog-content h2 { font-family: 'Fraunces', serif; font-size: 1.4rem; font-weight: 500; margin: 2.25rem 0 0.75rem; color: var(--ink); }
+        .blog-content h3 { font-size: 1.05rem; font-weight: 700; margin: 1.5rem 0 0.5rem; color: var(--ink); }
+        .blog-content p { margin-bottom: 1rem; }
+        .blog-content ul, .blog-content ol { margin: 0.75rem 0 1rem 1.5rem; }
+        .blog-content li { margin-bottom: 0.4rem; }
+        .blog-content strong { font-weight: 700; }
+        .blog-content em { font-style: italic; color: var(--muted); font-size: 0.94em; }
+        .blog-content a { color: var(--accent); text-decoration: underline; text-underline-offset: 2px; }
+        .blog-content hr { border: none; border-top: 1px solid var(--border); margin: 2rem 0; }
+        .blog-content blockquote {
+            border-left: 3px solid var(--accent); padding-left: 1.25rem;
+            margin: 1.25rem 0; color: var(--muted); font-style: italic;
+        }
+        .blog-content code {
+            background: var(--cream); padding: 2px 6px; border-radius: 4px;
+            font-size: 0.88em; font-family: 'Courier New', monospace;
+        }
+
+        /* ===== SEO META ===== */
+        .meta-section { max-width: 680px; margin-bottom: 2rem; }
+        .meta-card {
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: 12px; overflow: hidden; margin-bottom: 1.25rem;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+        }
+        .meta-card-header {
+            background: var(--cream); padding: 0.75rem 1.25rem;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.7rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+            color: var(--muted); display: flex; align-items: center; justify-content: space-between;
+        }
+        .meta-card-body { padding: 1.25rem; }
+        .meta-row { margin-bottom: 1rem; }
+        .meta-row:last-child { margin-bottom: 0; }
+        .meta-row label { display: block; font-size: 0.73rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; }
+        .meta-value { font-size: 0.92rem; color: var(--ink); line-height: 1.5; }
+        .meta-len {
+            display: inline-block; font-size: 0.7rem; font-weight: 700;
+            padding: 1px 7px; border-radius: 20px; margin-left: 8px; vertical-align: middle;
+        }
+        .meta-len.ok { background: var(--green-light); color: var(--green); }
+        .meta-len.warn { background: var(--amber-light); color: var(--amber); }
+        .meta-len.over { background: var(--red-light); color: var(--red); }
+        .meta-slug { font-family: 'Courier New', monospace; font-size: 0.86rem; background: var(--ink); color: #b8ffa8; padding: 4px 10px; border-radius: 5px; display: inline-block; }
+        .serp-preview { background: #fff; border: 1px solid #d0d3d4; border-radius: 8px; padding: 1rem 1.25rem; }
+        .serp-url { font-size: 0.75rem; color: #1a0dab; margin-bottom: 3px; }
+        .serp-title { font-size: 1.1rem; color: #1a0dab; font-weight: 400; margin-bottom: 4px; line-height: 1.3; }
+        .serp-desc { font-size: 0.83rem; color: #4d5156; line-height: 1.55; }
+
+        /* ===== IMAGE SUGGESTIONS ===== */
+        .images-header {
+            font-size: 0.82rem; color: var(--muted); margin-bottom: 1.5rem;
+            padding: 0.75rem 1rem; background: var(--cream);
+            border: 1px solid var(--border); border-radius: 8px;
+        }
+        .img-suggestion-card {
+            border: 1.5px solid var(--border); border-radius: 12px; overflow: hidden;
+            margin-bottom: 1rem; background: var(--surface);
+            box-shadow: 0 1px 4px rgba(0,0,0,0.04); transition: border-color 0.15s;
+        }
+        .img-suggestion-card:hover { border-color: var(--accent); }
+        .img-suggestion-header { background: var(--cream); padding: 0.6rem 1.1rem; border-bottom: 1px solid var(--border); }
+        .img-suggestion-num { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+        .img-suggestion-body { padding: 1rem 1.1rem; display: flex; flex-direction: column; gap: 0.75rem; }
+        .img-suggestion-desc { font-size: 0.9rem; color: var(--ink); line-height: 1.6; margin: 0; }
+        .btn-copy-suggestion {
+            align-self: flex-start; padding: 6px 14px; background: none;
+            border: 1.5px solid var(--border); border-radius: 6px;
+            font-family: 'DM Sans', sans-serif; font-size: 0.76rem; font-weight: 600;
+            color: var(--muted); cursor: pointer; transition: all 0.15s;
+        }
+        .btn-copy-suggestion:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-light); }
+
+        /* ===== SEO SCORE ===== */
+        .seo-score-bar {
+            display: flex; align-items: center; gap: 1.5rem;
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: 12px; padding: 1.5rem; margin-bottom: 1.25rem;
+        }
+        .score-ring-wrap { flex-shrink: 0; }
+        .score-ring {
+            width: 80px; height: 80px; border-radius: 50%;
+            background: conic-gradient(var(--border) 0deg, var(--border) 360deg);
+            display: flex; align-items: center; justify-content: center;
+            transition: background 0.5s;
+        }
+        .score-ring::before { content: ''; width: 58px; height: 58px; border-radius: 50%; background: white; }
+        .score-num {
+            position: absolute; font-family: 'Fraunces', serif; font-size: 1.1rem;
+            font-weight: 500; color: var(--ink);
+        }
+        .score-ring-wrap { position: relative; display: flex; align-items: center; justify-content: center; }
+        .score-checks { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.5rem; }
+        .score-check {
+            font-size: 0.71rem; font-weight: 600; padding: 3px 9px;
+            border-radius: 20px; 
+        }
+        .score-check.pass { background: var(--green-light); color: var(--green); }
+        .score-check.fail { background: var(--red-light); color: var(--red); }
+
+        /* ===== AI CHAT PANEL ===== */
+        .chat-wrapper {
+            display: none; flex-direction: column;
+            border-top: 2px solid var(--border);
+            background: var(--surface);
+            height: var(--chat-h);
+            position: sticky; bottom: 0; z-index: 40;
+        }
+        .chat-wrapper.visible { display: flex; }
+        .chat-topbar {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0.6rem 1.25rem;
+            background: var(--ink); color: white; flex-shrink: 0;
+        }
+        .chat-topbar-left { display: flex; align-items: center; gap: 0.6rem; }
+        .chat-topbar-title { font-size: 0.82rem; font-weight: 600; }
+        .chat-badge {
+            font-size: 0.65rem; font-weight: 700; padding: 2px 8px;
+            background: var(--accent); color: white; border-radius: 20px;
+            letter-spacing: 0.06em; text-transform: uppercase;
+        }
+        .chat-topbar-actions { display: flex; gap: 0.5rem; }
+        .btn-chat-action {
+            padding: 4px 10px; border-radius: 5px; border: 1px solid rgba(255,255,255,0.2);
+            background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.75);
+            font-family: 'DM Sans', sans-serif; font-size: 0.72rem; font-weight: 600;
+            cursor: pointer; transition: all 0.15s;
+        }
+        .btn-chat-action:hover { background: rgba(255,255,255,0.15); color: white; }
+        .btn-chat-action.primary { background: var(--accent); border-color: var(--accent); color: white; }
+        .btn-chat-action.primary:hover { background: var(--accent-hover); }
+        .chat-messages {
+            flex: 1; overflow-y: auto; padding: 1rem 1.25rem;
+            display: flex; flex-direction: column; gap: 0.75rem;
+        }
+        .chat-messages::-webkit-scrollbar { width: 4px; }
+        .chat-messages::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+        .chat-msg {
+            max-width: 88%; padding: 0.65rem 1rem; border-radius: 10px;
+            font-size: 0.86rem; line-height: 1.55;
+        }
+        .chat-msg.user {
+            align-self: flex-end; background: var(--accent); color: white;
+            border-bottom-right-radius: 3px;
+        }
+        .chat-msg.assistant {
+            align-self: flex-start; background: var(--cream);
+            color: var(--ink); border-bottom-left-radius: 3px;
+        }
+        .chat-msg.assistant pre {
+            background: white; border: 1px solid var(--border); border-radius: 6px;
+            padding: 0.75rem; margin-top: 0.5rem; font-size: 0.78rem;
+            overflow-x: auto; white-space: pre-wrap;
+        }
+        .chat-msg-meta {
+            font-size: 0.68rem; opacity: 0.6; margin-top: 3px;
+        }
+        .chat-typing {
+            align-self: flex-start; background: var(--cream);
+            padding: 0.65rem 1rem; border-radius: 10px; border-bottom-left-radius: 3px;
+            display: none;
+        }
+        .chat-typing.visible { display: block; }
+        .typing-dots { display: flex; gap: 4px; align-items: center; }
+        .typing-dots span {
+            width: 6px; height: 6px; border-radius: 50%; background: var(--muted2);
+            animation: bounce 1.2s infinite;
+        }
+        .typing-dots span:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dots span:nth-child(3) { animation-delay: 0.4s; }
+        @keyframes bounce { 0%, 60%, 100% { transform: translateY(0); } 30% { transform: translateY(-6px); } }
+        .chat-input-row {
+            display: flex; gap: 0.5rem; padding: 0.75rem 1.25rem;
+            border-top: 1px solid var(--border); flex-shrink: 0;
+            background: var(--surface);
+        }
+        .chat-input-wrap { flex: 1; position: relative; }
+        .chat-textarea {
+            width: 100%; border: 1.5px solid var(--border); border-radius: 8px;
+            padding: 9px 13px; font-family: 'DM Sans', sans-serif; font-size: 0.88rem;
+            resize: none; outline: none; height: 42px; max-height: 120px;
+            overflow-y: auto; line-height: 1.5; background: var(--paper);
+            transition: border-color 0.15s;
+        }
+        .chat-textarea:focus { border-color: var(--accent); background: white; }
+        .btn-send {
+            padding: 0 18px; background: var(--accent); color: white;
+            border: none; border-radius: 8px; font-family: 'DM Sans', sans-serif;
+            font-size: 0.88rem; font-weight: 700; cursor: pointer;
+            transition: background 0.15s; flex-shrink: 0;
+            display: flex; align-items: center; gap: 0.35rem;
+        }
+        .btn-send:hover:not(:disabled) { background: var(--accent-hover); }
+        .btn-send:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        /* Apply-changes banner */
+        .apply-banner {
+            display: none; padding: 0.5rem 1.25rem;
+            background: var(--amber-light); border-top: 1px solid #e8c97a;
+            font-size: 0.8rem; color: var(--amber);
+            align-items: center; justify-content: space-between; flex-shrink: 0;
+        }
+        .apply-banner.visible { display: flex; }
+        .btn-apply {
+            padding: 5px 14px; background: var(--amber); color: white;
+            border: none; border-radius: 6px; font-family: 'DM Sans', sans-serif;
+            font-size: 0.76rem; font-weight: 700; cursor: pointer;
+        }
+        .btn-apply:hover { background: #8f5800; }
+
+        /* Selection highlight helper */
+        .blog-content ::selection { background: rgba(192, 68, 30, 0.12); }
+
+        /* ===== SCROLLBAR ===== */
+        ::-webkit-scrollbar { width: 5px; height: 5px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #cac4bb; }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 900px) {
+            :root { --panel-w: 100%; }
+            .app { grid-template-columns: 1fr; }
+            .form-panel { height: auto; position: static; }
+            .loading-overlay { inset: 54px 0 0 0; }
+            .humanize-overlay { inset: 54px 0 0 0; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="topbar">
+    <div class="topbar-brand">
+        SEO Blog <span class="accent">Studio</span>
+        <div class="topbar-pill">Powered by Crontools</div>
+    </div>
+    <div class="topbar-steps">
+        <div class="step-dot active" id="step1"><div class="dot"></div>Configure</div>
+        <span class="step-sep">›</span>
+        <div class="step-dot" id="step2"><div class="dot"></div>Generating</div>
+        <span class="step-sep">›</span>
+        <div class="step-dot" id="step3"><div class="dot"></div>Review & Edit</div>
+    </div>
+</div>
+
+<!-- LOADING OVERLAY -->
+<div class="loading-overlay" id="loading">
+    <div class="loader-ring"></div>
+    <div class="loading-text" id="loading-text">Claude is analyzing your brief...</div>
+    <div class="loading-steps">
+        <div class="loading-step" id="ls1"><div class="dot"></div>Reading context and competitor analysis</div>
+        <div class="loading-step" id="ls2"><div class="dot"></div>Crafting SEO structure and keyword strategy</div>
+        <div class="loading-step" id="ls3"><div class="dot"></div>Writing human-like, rank-worthy content</div>
+        <div class="loading-step" id="ls4"><div class="dot"></div>Applying humanization pass and finalizing metadata</div>
+    </div>
+</div>
+
+<div class="app">
+
+<!-- ===== LEFT: FORM ===== -->
+<div class="form-panel">
+
+    <!-- Company Persistence Bar -->
+    <div class="company-bar">
+        <label>🏢 Company</label>
+        <select class="company-select" id="companySelect" onchange="loadCompany()">
+            <option value="">— Select saved company —</option>
+        </select>
+        <button class="btn-company" onclick="showSaveRow()" title="Save current inputs">💾 Save</button>
+        <button class="btn-company danger" onclick="deleteCompany()" title="Delete selected">✕</button>
+    </div>
+    <div class="save-name-row" id="saveNameRow">
+        <input class="save-name-input" id="saveNameInput" placeholder="Company name (e.g., Acme Corp)…" type="text">
+        <button class="btn-save-confirm" onclick="confirmSave()">Save</button>
+        <button class="btn-save-cancel" onclick="hideSaveRow()">Cancel</button>
+    </div>
+
+    <div class="panel-header">
+        <div class="panel-header-top">
+            <div>
+                <div class="panel-title">Blog Configuration</div>
+                <div class="panel-subtitle">All fields support 3000+ characters of context</div>
+            </div>
+            <div class="char-counter" id="totalChars">0 chars</div>
+        </div>
+        <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+    </div>
+
+    <div class="form-body">
+
+        <!-- Keywords & Topic -->
+        <div class="form-section">
+            <div class="section-header">
+                <div class="section-icon">🎯</div>
+                <div class="section-title">Keywords & Topic</div>
+            </div>
+            <div class="field">
+                <div class="field-header"><label>Blog Topic <span class="required-dot"></span></label><span class="field-hint">Be specific</span></div>
+                <textarea id="topic" class="sm" placeholder="E.g., How to Build a Winning SaaS Content Strategy in 2025 — From Zero to 50K Monthly Visitors"></textarea>
+            </div>
+            <div class="field">
+                <div class="field-header"><label>Primary Keyword <span class="required-dot"></span></label><span class="field-hint">Main target keyword</span></div>
+                <input type="text" id="primary_keyword" placeholder="e.g., saas content strategy">
+            </div>
+            <div class="field">
+                <div class="field-header"><label>Secondary Keywords</label><span class="field-hint">Comma-separated, 3–8 keywords</span></div>
+                <textarea id="secondary_keywords" class="sm" placeholder="content marketing for saas, saas growth hacks, b2b content strategy, saas seo tips"></textarea>
+            </div>
+        </div>
+
+        <!-- Search Intent -->
+        <div class="form-section">
+            <div class="section-header">
+                <div class="section-icon">🔍</div>
+                <div class="section-title">Search Intent <span class="required-dot"></span></div>
+            </div>
+            <div class="intent-grid">
+                <div class="intent-item">
+                    <input type="checkbox" id="intent-info" name="intent" value="Informational" checked>
+                    <label class="intent-label" for="intent-info">
+                        <div class="intent-check">✓</div><div class="intent-icon">📖</div>
+                        <div class="intent-info"><span class="intent-name">Informational</span><span class="intent-desc">Learn / understand</span></div>
+                    </label>
+                </div>
+                <div class="intent-item">
+                    <input type="checkbox" id="intent-comm" name="intent" value="Commercial">
+                    <label class="intent-label" for="intent-comm">
+                        <div class="intent-check">✓</div><div class="intent-icon">⚖️</div>
+                        <div class="intent-info"><span class="intent-name">Commercial</span><span class="intent-desc">Research / compare</span></div>
+                    </label>
+                </div>
+                <div class="intent-item">
+                    <input type="checkbox" id="intent-trans" name="intent" value="Transactional">
+                    <label class="intent-label" for="intent-trans">
+                        <div class="intent-check">✓</div><div class="intent-icon">💳</div>
+                        <div class="intent-info"><span class="intent-name">Transactional</span><span class="intent-desc">Ready to buy/sign up</span></div>
+                    </label>
+                </div>
+                <div class="intent-item">
+                    <input type="checkbox" id="intent-nav" name="intent" value="Navigational">
+                    <label class="intent-label" for="intent-nav">
+                        <div class="intent-check">✓</div><div class="intent-icon">🧭</div>
+                        <div class="intent-info"><span class="intent-name">Navigational</span><span class="intent-desc">Find specific page</span></div>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <!-- Content Settings -->
+        <div class="form-section">
+            <div class="section-header">
+                <div class="section-icon">⚙️</div>
+                <div class="section-title">Content Settings</div>
+            </div>
+            <div class="field">
+                <div class="field-header"><label>Content Type</label></div>
+                <select id="content_type">
+                    <option value="comprehensive-guide">Comprehensive Guide</option>
+                    <option value="how-to-guide" selected>How-To Guide (Step-by-Step)</option>
+                    <option value="listicle">Listicle (Best X / Top Y)</option>
+                    <option value="comparison">Comparison / vs. Article</option>
+                    <option value="case-study">Case Study</option>
+                    <option value="opinion-thought-leadership">Thought Leadership / Opinion</option>
+                    <option value="product-review">Product Review</option>
+                    <option value="news-roundup">News Roundup / Trend Analysis</option>
+                    <option value="faq-page">FAQ / Q&A Page</option>
+                    <option value="pillar-page">Pillar Page</option>
+                </select>
+            </div>
+            <div class="field">
+                <div class="field-header"><label>Tone of Voice</label></div>
+                <div class="tone-grid">
+                    <div class="tone-item"><input type="radio" name="tone" id="tone1" value="authoritative-conversational" checked><label class="tone-btn" for="tone1">Expert & Conversational</label></div>
+                    <div class="tone-item"><input type="radio" name="tone" id="tone2" value="friendly-approachable"><label class="tone-btn" for="tone2">Friendly & Approachable</label></div>
+                    <div class="tone-item"><input type="radio" name="tone" id="tone3" value="bold-direct"><label class="tone-btn" for="tone3">Bold & Direct</label></div>
+                    <div class="tone-item"><input type="radio" name="tone" id="tone4" value="formal-professional"><label class="tone-btn" for="tone4">Formal & Professional</label></div>
+                    <div class="tone-item"><input type="radio" name="tone" id="tone5" value="storytelling-narrative"><label class="tone-btn" for="tone5">Story-Driven</label></div>
+                    <div class="tone-item"><input type="radio" name="tone" id="tone6" value="witty-engaging"><label class="tone-btn" for="tone6">Witty & Engaging</label></div>
+                </div>
+            </div>
+            <div class="field">
+                <div class="field-header"><label>Target Word Count</label></div>
+                <div class="wc-options">
+                    <div class="wc-item"><input type="radio" name="wc" id="wc1" value="800-1200"><label class="wc-btn" for="wc1">800–1200<br><span style="font-size:0.65rem;font-weight:400">Quick read</span></label></div>
+                    <div class="wc-item"><input type="radio" name="wc" id="wc2" value="1500-2000" checked><label class="wc-btn" for="wc2">1500–2000<br><span style="font-size:0.65rem;font-weight:400">Standard</span></label></div>
+                    <div class="wc-item"><input type="radio" name="wc" id="wc3" value="2500-3500"><label class="wc-btn" for="wc3">2500–3500<br><span style="font-size:0.65rem;font-weight:400">Long-form</span></label></div>
+                    <div class="wc-item"><input type="radio" name="wc" id="wc4" value="4000+"><label class="wc-btn" for="wc4">4000+<br><span style="font-size:0.65rem;font-weight:400">Pillar</span></label></div>
+                </div>
+            </div>
+            <div class="field">
+                <div class="field-header"><label>Target Audience</label><span class="field-hint">Who is reading this?</span></div>
+                <input type="text" id="target_audience" placeholder="e.g., SaaS founders, B2B marketing managers, early-stage startups">
+            </div>
+            <div class="field">
+                <div class="field-header"><label>CTA Goal</label><span class="field-hint">What should readers do?</span></div>
+                <input type="text" id="cta_goal" placeholder="e.g., Sign up for free trial, Download the checklist, Book a demo">
+            </div>
+        </div>
+
+        <!-- Company Context -->
+        <div class="form-section">
+            <div class="section-header">
+                <div class="section-icon">🏢</div>
+                <div class="section-title">Company & Brand Context</div>
+            </div>
+            <div class="field">
+                <div class="field-header"><label>Company Context</label><span class="field-hint">Paste documentation, product info, brand voice</span></div>
+                <textarea id="company_context" class="xl" placeholder="Paste your company documentation, product descriptions, brand voice guidelines, unique value propositions, customer personas, case studies, testimonials...&#10;&#10;The more context you provide, the more accurately the blog will represent your brand."></textarea>
+            </div>
+            <div class="field">
+                <div class="field-header"><label>Blog Goal / Requirements</label><span class="field-hint">What should this blog achieve?</span></div>
+                <textarea id="requirement" class="md" placeholder="e.g., This blog should position us as the #1 alternative to Competitor X. Highlight our AI features. Drive sign-ups from founders who are frustrated with their current tool."></textarea>
+            </div>
+            <div class="field">
+                <div class="field-header"><label>Internal Links to Include</label><span class="field-hint">One per line: /page-slug — description</span></div>
+                <textarea id="internal_links" class="sm" placeholder="/pricing — pricing page&#10;/features/ai-writing — AI writing feature&#10;/blog/content-marketing-guide — content marketing guide"></textarea>
+            </div>
+        </div>
+
+        <!-- Research -->
+        <div class="form-section">
+            <div class="section-header">
+                <div class="section-icon">🔬</div>
+                <div class="section-title">Research & Competitive Intelligence</div>
+            </div>
+            <div class="field">
+                <div class="field-header"><label>Competitor Blogs / Inspiration</label><span class="field-hint">Paste full articles to outrank</span></div>
+                <textarea id="competitor_blogs" class="xl" placeholder="Paste competitor blog posts in full. The AI will analyze their structure, find gaps, and write something better.&#10;&#10;You can paste multiple blogs — just separate them with --- or a blank line."></textarea>
+            </div>
+            <div class="field">
+                <div class="field-header"><label>Research Data & Statistics</label><span class="field-hint">Data that backs your arguments</span></div>
+                <textarea id="research_data" class="lg" placeholder="Paste any relevant data, statistics, survey results, studies, or research findings. These will be cited naturally in the blog.&#10;&#10;Example: 'According to HubSpot's 2024 report, 82% of marketers actively use content marketing...'"></textarea>
+            </div>
+        </div>
+
+        <!-- Writing Instructions -->
+        <div class="form-section">
+            <div class="section-header">
+                <div class="section-icon">✍️</div>
+                <div class="section-title">Special Writing Instructions</div>
+            </div>
+            <div class="field">
+                <div class="field-header"><label>Specific Instructions</label><span class="field-hint">Anything extra</span></div>
+                <textarea id="prompt_instructions" class="lg" placeholder="Add any specific instructions:&#10;- Include a comparison table of top 5 tools&#10;- Write a strong counter-intuitive opening hook&#10;- Add a 'Quick Summary' box at the top&#10;- Use the phrase 'content-led growth' at least 3 times naturally&#10;- Include a step-by-step checklist section"></textarea>
+            </div>
+        </div>
+
+    </div><!-- /form-body -->
+
+    <div class="generate-wrap">
+        <button class="btn-generate" id="submitBtn" onclick="generateBlog()">
+            <span id="btnText">✦ Generate SEO Blog Post</span>
+        </button>
+        <button class="btn-optimize" id="optimizeBtn" onclick="optimizePrompt()">
+            ⚡ Strategist: Optimize Inputs
+        </button>
+        <div class="generate-hint">Takes 30–90 seconds &middot; Uses Claude Sonnet 4</div>
+    </div>
+</div><!-- /form-panel -->
+
+<!-- ===== RIGHT: OUTPUT ===== -->
+<div class="output-panel" id="outputPanel">
+    <div class="output-tabs">
+        <button class="tab-btn active" onclick="switchTab('blog', this)">Blog Post <span class="tab-pill" id="tab-pill-blog">—</span></button>
+        <button class="tab-btn" onclick="switchTab('meta', this)">SEO Meta <span class="tab-pill" id="tab-pill-meta">—</span></button>
+        <button class="tab-btn" onclick="switchTab('images', this)">Image Spots <span class="tab-pill" id="tab-pill-images">—</span></button>
+        <button class="tab-btn" onclick="switchTab('score', this)">SEO Score <span class="tab-pill" id="tab-pill-score">—</span></button>
+    </div>
+
+    <!-- BLOG TAB -->
+    <div class="tab-panel active" id="tab-blog">
+        <div class="empty-state" id="blog-empty">
+            <div class="empty-icon">✦</div>
+            <h3>Your blog will appear here</h3>
+            <p>Fill in the brief and click generate</p>
+        </div>
+        <div id="blog-output-wrap" style="display:none">
+            <div class="blog-toolbar">
+                <div class="stat-chips" id="blog-stats"></div>
+                <div class="toolbar-actions">
+                    <button class="humanize-btn" id="humanizeBtn" onclick="humanizeContent()">🧠 Humanize Content</button>
+                    <button class="copy-btn" id="copyMd" onclick="copyContent('md')">⎘ Copy Markdown</button>
+                    <button class="copy-btn" onclick="copyContent('text')">⎘ Copy Plain Text</button>
+                    <button class="export-btn" onclick="exportHTML()">↓ Export HTML</button>
+                </div>
+            </div>
+            <div class="blog-content" id="blog-output" onmouseup="onTextSelect()"></div>
+        </div>
+    </div>
+
+    <!-- META TAB -->
+    <div class="tab-panel" id="tab-meta">
+        <div class="empty-state" id="meta-empty">
+            <div class="empty-icon">◈</div>
+            <h3>SEO metadata will appear here</h3>
+            <p>Generate a blog post first</p>
+        </div>
+        <div id="meta-output" style="display:none">
+            <div class="meta-section">
+                <div class="meta-card">
+                    <div class="meta-card-header">
+                        <span>SEO Metadata</span>
+                        <button class="copy-btn" style="padding:3px 10px;font-size:0.7rem;" onclick="copyMeta()">⎘ Copy All</button>
+                    </div>
+                    <div class="meta-card-body">
+                        <div class="meta-row"><label>Meta Title</label><div class="meta-value" id="meta-title-val"></div></div>
+                        <div class="meta-row"><label>Meta Description</label><div class="meta-value" id="meta-desc-val"></div></div>
+                        <div class="meta-row"><label>URL Slug</label><div><span class="meta-slug" id="meta-slug-val"></span></div></div>
+                        <div class="meta-row"><label>Content Type</label><div class="meta-value" id="meta-ctype-val" style="color:var(--muted)"></div></div>
+                    </div>
+                </div>
+                <div class="meta-card">
+                    <div class="meta-card-header">Google SERP Preview</div>
+                    <div class="meta-card-body">
+                        <div class="serp-preview">
+                            <div class="serp-url">https://yoursite.com/blog/<span id="serp-slug"></span></div>
+                            <div class="serp-title" id="serp-title"></div>
+                            <div class="serp-desc" id="serp-desc"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- IMAGE SPOTS TAB -->
+    <div class="tab-panel" id="tab-images">
+        <div class="empty-state" id="images-empty">
+            <div class="empty-icon">◎</div>
+            <h3>Image placement suggestions will appear here</h3>
+            <p>Claude will suggest where images belong and describe each one</p>
+        </div>
+        <div id="images-output" style="display:none">
+            <div class="images-header">Claude's image placement recommendations — brief your designer or photographer from these</div>
+            <div id="image-suggestion-cards"></div>
+        </div>
+    </div>
+
+    <!-- SEO SCORE TAB -->
+    <div class="tab-panel" id="tab-score">
+        <div class="empty-state" id="score-empty">
+            <div class="empty-icon">◉</div>
+            <h3>SEO analysis will appear here</h3>
+            <p>Generate a blog to see your SEO score</p>
+        </div>
+        <div id="score-output" style="display:none; max-width: 620px;">
+            <div class="seo-score-bar" id="seo-score-bar">
+                <div class="score-ring-wrap">
+                    <div class="score-ring" id="score-ring"><span class="score-num" id="score-num">—</span></div>
+                </div>
+                <div>
+                    <div style="font-family:'Fraunces',serif;font-size:1.1rem;font-weight:500;margin-bottom:6px;" id="score-label">SEO Score</div>
+                    <div class="score-checks" id="score-checks"></div>
+                </div>
+            </div>
+            <div id="score-details" style="display:flex;flex-direction:column;gap:0.75rem;margin-top:1.25rem;"></div>
+        </div>
+    </div>
+
+    <!-- AI CHAT PANEL (sticky bottom) -->
+    <div class="chat-wrapper" id="chatWrapper">
+        <div class="chat-topbar">
+            <div class="chat-topbar-left">
+                <span class="chat-topbar-title">AI Editor</span>
+                <span class="chat-badge">Context-aware</span>
+            </div>
+            <div class="chat-topbar-actions">
+                <button class="btn-chat-action" onclick="clearChat()" title="Clear conversation">↺ Clear</button>
+                <button class="btn-chat-action primary" onclick="applyFullBlog()" id="applyFullBtn" style="display:none">↑ Apply Full Blog</button>
+                <button class="btn-chat-action" onclick="toggleChat()" title="Minimise">✕ Close</button>
+            </div>
+        </div>
+        <div class="apply-banner" id="applyBanner">
+            <span>The AI returned updated content. Apply it to replace the current blog?</span>
+            <button class="btn-apply" onclick="applyPendingBlog()">Apply Changes</button>
+        </div>
+        <div class="chat-messages" id="chatMessages">
+            <div class="chat-msg assistant">
+                Blog generated! I already have your full blog and all inputs. Ask me to edit anything, rewrite a section, improve the hook, adjust the tone, tighten the conclusion, or update a specific paragraph. You can also select text in the blog and ask me to improve just that part.
+            </div>
+        </div>
+        <div class="chat-typing" id="chatTyping">
+            <div class="typing-dots"><span></span><span></span><span></span></div>
+        </div>
+        <div class="chat-input-row">
+            <div class="chat-input-wrap">
+                <textarea class="chat-textarea" id="chatInput"
+                    placeholder="Ask to edit anything… 'Rewrite the introduction', 'Make the tone bolder', 'Add a comparison table'…"
+                    onkeydown="handleChatKey(event)" oninput="autoResizeChat(this)"></textarea>
+            </div>
+            <button class="btn-send" id="sendBtn" onclick="sendChat()">Send ↑</button>
+        </div>
+    </div>
+
+</div><!-- /output-panel -->
+</div><!-- /app -->
+
+<!-- Humanize Loading Overlay -->
+<div class="humanize-overlay" id="humanizeOverlay">
+    <div class="loader-ring" style="border-top-color: var(--green);"></div>
+    <div class="loading-text" id="humanize-loading-text" style="color: var(--green);">Humanizing your content...</div>
+    <div class="humanize-progress"><div class="humanize-progress-fill" id="humanizeProgressFill"></div></div>
+    <div style="font-size: 0.78rem; color: var(--muted); max-width: 340px; text-align: center; line-height: 1.6;">
+        Rewriting every sentence to sound naturally human. This takes 30-60 seconds.
+    </div>
+</div>
+
+<!-- SEO Strategy Brief Modal -->
+<div class="optimize-modal-overlay" id="optimizeModal">
+    <div class="optimize-modal">
+        <div class="optimize-modal-header">
+            <div class="optimize-modal-title">SEO Strategy Brief <span class="strat-badge">Lead Strategist</span></div>
+            <button class="optimize-modal-close" onclick="closeOptimizeModal()">✕</button>
+        </div>
+        <div class="optimize-modal-body" id="strategyModalBody">
+            <div class="strategy-section">
+                <div class="strategy-section-label">⏳ Analyzing...</div>
+                <div class="strategy-logic">The Lead SEO Strategist is analyzing your topic, keywords, and competitive landscape to dictate the winning parameters...</div>
+            </div>
+        </div>
+        <div class="optimize-modal-footer">
+            <button class="btn-modal" onclick="closeOptimizeModal()">Close</button>
+            <button class="btn-modal success" id="applyStrategyBtn" onclick="applyStrategy()" style="display:none">✦ Apply Strategy</button>
+        </div>
+    </div>
+</div>
+
+<script>
+// ===== STATE =====
+let rawMarkdown = '';
+let seoScoreData = {};
+let seoMeta = {};
+let imageSuggestionsData = [];
+let chatHistory = [];
+let briefContext = '';
+let pendingBlogContent = '';
+let selectedText = '';
+let companiesData = {};
+
+// ===== INIT =====
+document.addEventListener('DOMContentLoaded', () => {
+    loadCompanies();
+    updateProgress();
+});
+
+// ===== TAB SWITCHING =====
+function switchTab(tab, btn) {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    if (btn) btn.classList.add('active');
+    document.getElementById('tab-' + tab).classList.add('active');
+}
+
+// ===== FORM PROGRESS =====
+function updateProgress() {
+    const fields = ['topic', 'primary_keyword', 'secondary_keywords', 'company_context', 'requirement', 'prompt_instructions'];
+    let filled = 0, totalChars = 0;
+    fields.forEach(id => {
+        const el = document.getElementById(id);
+        if (el && el.value.trim()) filled++;
+        if (el) totalChars += el.value.length;
+    });
+    const intents = document.querySelectorAll('input[name="intent"]:checked').length;
+    if (intents > 0) filled++;
+    document.getElementById('progressFill').style.width = Math.round((filled / (fields.length + 1)) * 100) + '%';
+    document.getElementById('totalChars').textContent = totalChars.toLocaleString() + ' chars';
+}
+document.querySelectorAll('textarea, input[type="text"], input[name="intent"]').forEach(el => {
+    el.addEventListener('input', updateProgress);
+    el.addEventListener('change', updateProgress);
+});
+
+// ===== COMPANIES =====
+async function loadCompanies() {
+    try {
+        const res = await fetch('/companies');
+        companiesData = await res.json();
+        const sel = document.getElementById('companySelect');
+        const current = sel.value;
+        sel.innerHTML = '<option value="">— Select saved company —</option>';
+        Object.keys(companiesData).sort().forEach(name => {
+            const opt = document.createElement('option');
+            opt.value = name; opt.textContent = name;
+            if (name === current) opt.selected = true;
+            sel.appendChild(opt);
+        });
+    } catch(e) { console.warn('Could not load companies', e); }
+}
+
+function loadCompany() {
+    const name = document.getElementById('companySelect').value;
+    if (!name || !companiesData[name]) return;
+    const c = companiesData[name];
+    document.getElementById('company_context').value = c.company_context || '';
+    document.getElementById('target_audience').value = c.target_audience || '';
+    document.getElementById('cta_goal').value = c.cta_goal || '';
+    document.getElementById('requirement').value = c.requirement || '';
+    document.getElementById('prompt_instructions').value = c.prompt_instructions || '';
+    document.getElementById('internal_links').value = c.internal_links || '';
+    updateProgress();
+}
+
+function showSaveRow() {
+    const sel = document.getElementById('companySelect');
+    document.getElementById('saveNameInput').value = sel.value || '';
+    document.getElementById('saveNameRow').classList.add('visible');
+    document.getElementById('saveNameInput').focus();
+}
+
+function hideSaveRow() {
+    document.getElementById('saveNameRow').classList.remove('visible');
+}
+
+async function confirmSave() {
+    const name = document.getElementById('saveNameInput').value.trim();
+    if (!name) { alert('Please enter a company name.'); return; }
+    const payload = {
+        company_name: name,
+        company_context: document.getElementById('company_context').value,
+        target_audience: document.getElementById('target_audience').value,
+        cta_goal: document.getElementById('cta_goal').value,
+        requirement: document.getElementById('requirement').value,
+        prompt_instructions: document.getElementById('prompt_instructions').value,
+        internal_links: document.getElementById('internal_links').value,
+    };
+    try {
+        await fetch('/companies/save', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(payload) });
+        hideSaveRow();
+        await loadCompanies();
+        document.getElementById('companySelect').value = name;
+        showToast(`"${name}" saved`);
+    } catch(e) { alert('Save failed: ' + e.message); }
+}
+
+async function deleteCompany() {
+    const name = document.getElementById('companySelect').value;
+    if (!name) return;
+    if (!confirm(`Delete "${name}"?`)) return;
+    try {
+        await fetch('/companies/' + encodeURIComponent(name), { method: 'DELETE' });
+        await loadCompanies();
+        showToast(`"${name}" deleted`);
+    } catch(e) { alert('Delete failed: ' + e.message); }
+}
+
+function showToast(msg) {
+    const t = document.createElement('div');
+    t.textContent = msg;
+    Object.assign(t.style, {
+        position:'fixed', bottom:'1.5rem', right:'1.5rem', zIndex:'9999',
+        background:'var(--ink)', color:'white', padding:'10px 18px',
+        borderRadius:'8px', fontSize:'0.83rem', fontWeight:'600',
+        boxShadow:'0 4px 16px rgba(0,0,0,0.18)', opacity:'0',
+        transition:'opacity 0.2s'
+    });
+    document.body.appendChild(t);
+    requestAnimationFrame(() => { t.style.opacity = '1'; });
+    setTimeout(() => { t.style.opacity = '0'; setTimeout(() => t.remove(), 300); }, 2500);
+}
+
+// ===== LOADING STEPS =====
+let loadingTimer = null;
+function startLoadingAnimation() {
+    const steps = ['ls1','ls2','ls3','ls4'];
+    const texts = ['Analyzing your brief and competitor context...','Architecting SEO structure and keyword strategy...','Writing human-like, rank-worthy content...','Applying humanization pass and finalizing metadata...'];
+    let i = 0;
+    document.querySelectorAll('.loading-step').forEach(s => s.classList.remove('visible'));
+    loadingTimer = setInterval(() => {
+        if (i < steps.length) {
+            document.getElementById(steps[i]).classList.add('visible');
+            document.getElementById('loading-text').textContent = texts[i];
+            i++;
+        }
+    }, 8000);
+}
+function stopLoadingAnimation() {
+    if (loadingTimer) clearInterval(loadingTimer);
+    document.querySelectorAll('.loading-step').forEach(s => s.classList.remove('visible'));
+}
+
+function getSelectedIntents() {
+    return Array.from(document.querySelectorAll('input[name="intent"]:checked')).map(cb => cb.value);
+}
+
+// ===== GENERATE BLOG =====
+async function generateBlog() {
+    const btn = document.getElementById('submitBtn');
+    const btnText = document.getElementById('btnText');
+    const intents = getSelectedIntents();
+    if (!intents.length) { alert('Please select at least one search intent.'); return; }
+    const topic = document.getElementById('topic').value.trim();
+    const primaryKw = document.getElementById('primary_keyword').value.trim();
+    if (!topic || !primaryKw) { alert('Please fill in the Topic and Primary Keyword — they\'re required.'); return; }
+
+    const data = {
+        topic, primary_keyword: primaryKw,
+        secondary_keywords: document.getElementById('secondary_keywords').value,
+        search_intents: intents,
+        content_type: document.getElementById('content_type').value,
+        tone: document.querySelector('input[name="tone"]:checked')?.value || 'authoritative-conversational',
+        word_count: document.querySelector('input[name="wc"]:checked')?.value || '1500-2000',
+        target_audience: document.getElementById('target_audience').value,
+        cta_goal: document.getElementById('cta_goal').value,
+        company_context: document.getElementById('company_context').value,
+        requirement: document.getElementById('requirement').value,
+        internal_links: document.getElementById('internal_links').value,
+        competitor_blogs: document.getElementById('competitor_blogs').value,
+        research_data: document.getElementById('research_data').value,
+        prompt_instructions: document.getElementById('prompt_instructions').value,
+    };
+
+    // Build brief context string for chat
+    briefContext = `Topic: ${data.topic}\nPrimary Keyword: ${data.primary_keyword}\nSecondary Keywords: ${data.secondary_keywords}\nSearch Intents: ${intents.join(', ')}\nContent Type: ${data.content_type}\nTone: ${data.tone}\nTarget Audience: ${data.target_audience}\nWord Count: ${data.word_count}\nCTA Goal: ${data.cta_goal}\nCompany Context: ${data.company_context.slice(0,500)}\nRequirements: ${data.requirement.slice(0,400)}`;
+
+    btn.disabled = true; btnText.textContent = '⏳ Generating...';
+    document.getElementById('loading').classList.add('visible');
+    ['blog-empty','meta-empty','images-empty','score-empty'].forEach(id => document.getElementById(id).style.display = 'flex');
+    ['blog-output-wrap','meta-output','images-output','score-output'].forEach(id => document.getElementById(id).style.display = 'none');
+    document.getElementById('step2').classList.add('active');
+    startLoadingAnimation();
+
+    try {
+        const response = await fetch('/generate', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(data) });
+        const result = await response.json();
+        document.getElementById('loading').classList.remove('visible');
+        stopLoadingAnimation();
+
+        if (result.error) {
+            document.getElementById('blog-empty').querySelector('p').textContent = '⚠ Error: ' + result.error;
+            return;
+        }
+
+        rawMarkdown = result.blog;
+        seoScoreData = result.seo_score || {};
+        seoMeta = result.seo_meta || {};
+
+        renderBlog(rawMarkdown);
+        renderMeta(seoMeta);
+        renderImageSuggestions();
+        renderSeoScore(seoScoreData);
+
+        document.getElementById('step3').classList.add('active');
+
+        // Switch to blog tab
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+        document.querySelector('.tab-btn').classList.add('active');
+        document.getElementById('tab-blog').classList.add('active');
+
+        // Activate chat
+        activateChat();
+
+    } catch(err) {
+        document.getElementById('loading').classList.remove('visible');
+        stopLoadingAnimation();
+        document.getElementById('blog-empty').querySelector('p').textContent = '⚠ Request failed: ' + err.message;
+    } finally {
+        btn.disabled = false; btnText.textContent = '✦ Generate SEO Blog Post';
+    }
+}
+
+// ===== RENDER BLOG =====
+function renderBlog(markdown) {
+    let clean = markdown.replace(/```seo-meta[\s\S]*?```/g, '').trim();
+    document.getElementById('blog-output').innerHTML = marked.parse(clean);
+
+    const wordCount = clean.replace(/<[^>]*>/g, '').split(/\s+/).filter(Boolean).length;
+    const readTime = Math.ceil(wordCount / 220);
+    const h2Count = (clean.match(/^## /gm) || []).length;
+    const imgSpots = (clean.match(/\*\[Suggested image:/g) || []).length;
+
+    document.getElementById('blog-stats').innerHTML = `
+        <div class="stat-chip">📝 <strong>${wordCount.toLocaleString()}</strong> words</div>
+        <div class="stat-chip">⏱ <strong>${readTime} min</strong> read</div>
+        <div class="stat-chip">📑 <strong>${h2Count}</strong> sections</div>
+        <div class="stat-chip">🖼 <strong>${imgSpots}</strong> image spots</div>`;
+
+    document.getElementById('tab-pill-blog').textContent = wordCount.toLocaleString() + 'w';
+    document.getElementById('tab-pill-images').textContent = imgSpots || '—';
+    document.getElementById('blog-empty').style.display = 'none';
+    document.getElementById('blog-output-wrap').style.display = 'block';
+}
+
+// ===== RENDER META =====
+function renderMeta(meta) {
+    if (!meta.title && !meta.description) return;
+    const titleLen = (meta.title || '').length;
+    const descLen = (meta.description || '').length;
+    const tc = titleLen < 40 ? 'warn' : titleLen > 60 ? 'over' : 'ok';
+    const dc = descLen < 100 ? 'warn' : descLen > 160 ? 'over' : 'ok';
+    document.getElementById('meta-title-val').innerHTML = `${meta.title || ''} <span class="meta-len ${tc}">${titleLen} chars</span>`;
+    document.getElementById('meta-desc-val').innerHTML = `${meta.description || ''} <span class="meta-len ${dc}">${descLen} chars</span>`;
+    document.getElementById('meta-slug-val').textContent = meta.slug || '';
+    document.getElementById('meta-ctype-val').textContent = meta.content_type || '';
+    document.getElementById('serp-slug').textContent = meta.slug || '';
+    document.getElementById('serp-title').textContent = meta.title || '';
+    document.getElementById('serp-desc').textContent = meta.description || '';
+    document.getElementById('tab-pill-meta').textContent = '✓';
+    document.getElementById('meta-empty').style.display = 'none';
+    document.getElementById('meta-output').style.display = 'block';
+}
+
+// ===== RENDER IMAGE SUGGESTIONS =====
+function renderImageSuggestions() {
+    const container = document.getElementById('image-suggestion-cards');
+    container.innerHTML = '';
+    const matches = [...rawMarkdown.matchAll(/\*\[Suggested image:\s*([^\]]+)\]\*/gi)];
+    imageSuggestionsData = matches.map((m, i) => ({ index: i, description: m[1].trim() }));
+    if (!imageSuggestionsData.length) return;
+
+    imageSuggestionsData.forEach((s, i) => {
+        const card = document.createElement('div');
+        card.className = 'img-suggestion-card';
+        card.innerHTML = `
+            <div class="img-suggestion-header"><span class="img-suggestion-num">📸 Image Spot ${i + 1}</span></div>
+            <div class="img-suggestion-body">
+                <p class="img-suggestion-desc">${s.description}</p>
+                <button class="btn-copy-suggestion" onclick="copySuggestion(this, \`${s.description.replace(/`/g,"'")}\`)">⎘ Copy Brief</button>
+            </div>`;
+        container.appendChild(card);
+    });
+
+    document.getElementById('images-empty').style.display = 'none';
+    document.getElementById('images-output').style.display = 'block';
+}
+
+function copySuggestion(btn, text) {
+    navigator.clipboard.writeText(text).then(() => {
+        btn.textContent = '✓ Copied!';
+        setTimeout(() => { btn.textContent = '⎘ Copy Brief'; }, 2000);
+    });
+}
+
+// ===== RENDER SEO SCORE =====
+function renderSeoScore(data) {
+    if (!data || !data.score) return;
+    const score = data.score;
+    const pct = score * 3.6;
+    const ring = document.getElementById('score-ring');
+    const color = score >= 80 ? 'var(--green)' : score >= 60 ? 'var(--amber)' : 'var(--red)';
+    ring.style.background = `conic-gradient(${color} ${pct}deg, var(--border) 0%)`;
+    document.getElementById('score-num').textContent = score + '%';
+    document.getElementById('score-label').textContent = score >= 80 ? 'Great SEO' : score >= 60 ? 'Good — Improve' : 'Needs Work';
+    document.getElementById('tab-pill-score').textContent = score + '%';
+
+    const checkLabels = {
+        keyword_in_h1: 'Keyword in H1', keyword_in_intro: 'Keyword in intro',
+        has_multiple_sections: '4+ H2 sections', has_faq: 'FAQ section',
+        has_image_suggestions: 'Image spots placed', has_internal_links: 'Internal links',
+        word_count_ok: 'Min word count', keyword_density_ok: `Density: ${data.keyword_density}%`
+    };
+    document.getElementById('score-checks').innerHTML = Object.entries(data.checks || {}).map(([k,v]) =>
+        `<span class="score-check ${v?'pass':'fail'}">${v?'✓':'✗'} ${checkLabels[k]||k}</span>`).join('');
+
+    document.getElementById('score-details').innerHTML = `
+        <div class="meta-card"><div class="meta-card-header">Content Stats</div>
+        <div class="meta-card-body" style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+            <div><div style="font-size:0.72rem;color:var(--muted);text-transform:uppercase;font-weight:700;letter-spacing:0.08em;margin-bottom:3px;">Word Count</div><div style="font-size:1.4rem;font-family:'Fraunces',serif;font-weight:500;">${(data.word_count||0).toLocaleString()}</div></div>
+            <div><div style="font-size:0.72rem;color:var(--muted);text-transform:uppercase;font-weight:700;letter-spacing:0.08em;margin-bottom:3px;">H2 Sections</div><div style="font-size:1.4rem;font-family:'Fraunces',serif;font-weight:500;">${data.h2_count||0}</div></div>
+            <div><div style="font-size:0.72rem;color:var(--muted);text-transform:uppercase;font-weight:700;letter-spacing:0.08em;margin-bottom:3px;">Keyword Density</div><div style="font-size:1.4rem;font-family:'Fraunces',serif;font-weight:500;">${data.keyword_density||0}%</div></div>
+            <div><div style="font-size:0.72rem;color:var(--muted);text-transform:uppercase;font-weight:700;letter-spacing:0.08em;margin-bottom:3px;">Image Spots</div><div style="font-size:1.4rem;font-family:'Fraunces',serif;font-weight:500;">${data.img_suggestions||0}</div></div>
+        </div></div>`;
+    document.getElementById('score-empty').style.display = 'none';
+    document.getElementById('score-output').style.display = 'block';
+}
+
+// ===== COPY / EXPORT =====
+async function copyContent(type) {
+    const btn = document.getElementById('copyMd');
+    let text = rawMarkdown.replace(/```seo-meta[\s\S]*?```\n?/, '').trim();
+    if (type === 'text') text = text.replace(/#{1,6} /g,'').replace(/\*\*(.+?)\*\*/g,'$1').replace(/\[(.+?)\]\(.+?\)/g,'$1');
+    try {
+        await navigator.clipboard.writeText(text);
+        btn.textContent = '✓ Copied!'; btn.classList.add('copied');
+        setTimeout(() => { btn.textContent = '⎘ Copy Markdown'; btn.classList.remove('copied'); }, 2500);
+    } catch(err) { alert('Copy failed: ' + err.message); }
+}
+
+async function copyMeta() {
+    const text = `META TITLE: ${seoMeta.title||''}\nMETA DESCRIPTION: ${seoMeta.description||''}\nURL SLUG: ${seoMeta.slug||''}`;
+    await navigator.clipboard.writeText(text).catch(e => alert('Copy failed: ' + e.message));
+}
+
+async function exportHTML() {
+    const titleRaw = seoMeta.title || document.getElementById('topic').value || 'Blog Post';
+    try {
+        const res = await fetch('/export-html', {
+            method: 'POST', headers: {'Content-Type':'application/json'},
+            body: JSON.stringify({ markdown: rawMarkdown, title: titleRaw })
+        });
+        const data = await res.json();
+        if (data.error) { alert('Export error: ' + data.error); return; }
+        const blob = new Blob([data.html], { type: 'text/html' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = (seoMeta.slug || 'blog-post') + '.html';
+        a.click();
+        URL.revokeObjectURL(url);
+    } catch(e) { alert('Export failed: ' + e.message); }
+}
+
+// ===== TEXT SELECTION (for targeted edits) =====
+function onTextSelect() {
+    const sel = window.getSelection();
+    if (sel && sel.toString().trim().length > 10) {
+        selectedText = sel.toString().trim();
+        const chatInput = document.getElementById('chatInput');
+        if (chatInput.value === '') {
+            chatInput.value = `Improve this passage:\n\n"${selectedText.slice(0,300)}${selectedText.length > 300 ? '...' : ''}"`;
+            autoResizeChat(chatInput);
+        }
+        // Make sure chat is visible and focus input
+        document.getElementById('chatWrapper').classList.add('visible');
+        chatInput.focus();
+    }
+}
+
+// ===== CHAT =====
+function activateChat() {
+    document.getElementById('chatWrapper').classList.add('visible');
+    chatHistory = [];
+}
+
+function toggleChat() {
+    document.getElementById('chatWrapper').classList.toggle('visible');
+}
+
+function clearChat() {
+    chatHistory = [];
+    const msgs = document.getElementById('chatMessages');
+    msgs.innerHTML = `<div class="chat-msg assistant">Chat cleared. I still have the full blog and your original brief. Ask me to edit anything.</div>`;
+    document.getElementById('applyBanner').classList.remove('visible');
+    pendingBlogContent = '';
+    document.getElementById('applyFullBtn').style.display = 'none';
+}
+
+function handleChatKey(e) {
+    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendChat(); }
+}
+
+function autoResizeChat(el) {
+    el.style.height = '42px';
+    el.style.height = Math.min(el.scrollHeight, 120) + 'px';
+}
+
+async function sendChat() {
+    const input = document.getElementById('chatInput');
+    const msg = input.value.trim();
+    if (!msg) return;
+
+    addChatMsg('user', msg);
+    chatHistory.push({ role: 'user', content: msg });
+    input.value = ''; input.style.height = '42px';
+    selectedText = '';
+
+    const sendBtn = document.getElementById('sendBtn');
+    sendBtn.disabled = true;
+    document.getElementById('chatTyping').classList.add('visible');
+    scrollChatToBottom();
+
+    try {
+        const res = await fetch('/chat', {
+            method: 'POST', headers: {'Content-Type':'application/json'},
+            body: JSON.stringify({
+                messages: chatHistory,
+                blog_context: rawMarkdown,
+                brief_context: briefContext
+            })
+        });
+        const data = await res.json();
+        document.getElementById('chatTyping').classList.remove('visible');
+
+        if (data.error) {
+            addChatMsg('assistant', '⚠ Error: ' + data.error);
+            return;
+        }
+
+        const reply = data.reply;
+        chatHistory.push({ role: 'assistant', content: reply });
+        addChatMsg('assistant', reply);
+
+        // Detect if reply contains substantial markdown (likely a blog update)
+        detectAndOfferApply(reply);
+
+    } catch(e) {
+        document.getElementById('chatTyping').classList.remove('visible');
+        addChatMsg('assistant', '⚠ Request failed: ' + e.message);
+    } finally {
+        sendBtn.disabled = false;
+        scrollChatToBottom();
+    }
+}
+
+function addChatMsg(role, content) {
+    const msgs = document.getElementById('chatMessages');
+    const div = document.createElement('div');
+    div.className = 'chat-msg ' + role;
+
+    if (role === 'assistant') {
+        // Render markdown in assistant messages, but show code as pre
+        const hasMarkdown = /#{1,3} |^\*\*|^- |\n\n/m.test(content);
+        if (hasMarkdown) {
+            const pre = document.createElement('pre');
+            pre.textContent = content;
+            div.appendChild(pre);
+        } else {
+            div.textContent = content;
+        }
+    } else {
+        div.textContent = content;
+    }
+
+    msgs.appendChild(div);
+    scrollChatToBottom();
+}
+
+function scrollChatToBottom() {
+    const msgs = document.getElementById('chatMessages');
+    setTimeout(() => { msgs.scrollTop = msgs.scrollHeight; }, 50);
+}
+
+function detectAndOfferApply(reply) {
+    // If reply contains an H1 and substantial markdown, it's a full or partial blog update
+    const hasH1 = /^# [^#]/m.test(reply);
+    const hasMultipleH2 = (reply.match(/^## /gm) || []).length >= 2;
+    const isSubstantial = reply.length > 400;
+
+    if ((hasH1 || hasMultipleH2) && isSubstantial) {
+        pendingBlogContent = reply;
+        document.getElementById('applyBanner').classList.add('visible');
+        document.getElementById('applyFullBtn').style.display = 'inline-flex';
+    }
+}
+
+function applyPendingBlog() {
+    if (!pendingBlogContent) return;
+    rawMarkdown = pendingBlogContent;
+    renderBlog(rawMarkdown);
+    renderImageSuggestions();
+    const seo = computeLocalSeoScore(rawMarkdown);
+    document.getElementById('applyBanner').classList.remove('visible');
+    pendingBlogContent = '';
+    document.getElementById('applyFullBtn').style.display = 'none';
+    showToast('Blog updated');
+    // Switch to blog tab
+    switchTab('blog', document.querySelector('.tab-btn'));
+}
+
+function applyFullBlog() {
+    applyPendingBlog();
+}
+
+function computeLocalSeoScore(md) {
+    // Light local re-score after edits (won't match server exactly but gives live feedback)
+    const clean = md.replace(/```[\s\S]*?```/g, '');
+    const words = clean.split(/\s+/).filter(Boolean);
+    const kw = document.getElementById('primary_keyword').value.toLowerCase();
+    const h2Count = (clean.match(/^## /gm) || []).length;
+    const imgSpots = (clean.match(/\*\[Suggested image:/g) || []).length;
+    const wordCount = words.length;
+
+    document.getElementById('tab-pill-blog').textContent = wordCount.toLocaleString() + 'w';
+    document.getElementById('tab-pill-images').textContent = imgSpots || '-';
+}
+
+// ===== HUMANIZE CONTENT =====
+async function humanizeContent() {
+    if (!rawMarkdown) { alert('Generate a blog first before humanizing.'); return; }
+    const btn = document.getElementById('humanizeBtn');
+    btn.disabled = true;
+    btn.textContent = '🧠 Humanizing...';
+    btn.classList.add('active');
+
+    // Show humanize overlay
+    const overlay = document.getElementById('humanizeOverlay');
+    overlay.classList.add('visible');
+    // Reset animation
+    const fill = document.getElementById('humanizeProgressFill');
+    fill.style.animation = 'none';
+    fill.offsetHeight; // trigger reflow
+    fill.style.animation = 'humanize-fill 45s ease-out forwards';
+
+    const primaryKw = document.getElementById('primary_keyword').value.trim();
+
+    try {
+        const res = await fetch('/humanize', {
+            method: 'POST', headers: {'Content-Type':'application/json'},
+            body: JSON.stringify({ markdown: rawMarkdown, primary_keyword: primaryKw })
+        });
+        const data = await res.json();
+        overlay.classList.remove('visible');
+
+        if (data.error) {
+            alert('Humanization error: ' + data.error);
+            return;
+        }
+
+        rawMarkdown = data.blog;
+        renderBlog(rawMarkdown);
+        renderImageSuggestions();
+        if (data.seo_meta) renderMeta(data.seo_meta);
+        if (data.seo_score) renderSeoScore(data.seo_score);
+        computeLocalSeoScore(rawMarkdown);
+        showToast('Content humanized successfully');
+
+    } catch(e) {
+        overlay.classList.remove('visible');
+        alert('Humanization failed: ' + e.message);
+    } finally {
+        btn.disabled = false;
+        btn.textContent = '🧠 Humanize Content';
+        btn.classList.remove('active');
+    }
+}
+
+// ===== THE STRATEGIST: OPTIMIZE INPUTS =====
+let pendingStrategy = null;
+
+async function optimizePrompt() {
+    const btn = document.getElementById('optimizeBtn');
+    const topic = document.getElementById('topic').value.trim();
+    const primaryKw = document.getElementById('primary_keyword').value.trim();
+    if (!topic && !primaryKw) { alert('Please fill in at least a Topic or Primary Keyword first.'); return; }
+
+    btn.disabled = true;
+    btn.innerHTML = '⏳ Strategist analyzing...';
+
+    // Show modal with loading state
+    document.getElementById('strategyModalBody').innerHTML = `
+        <div class="strategy-section">
+            <div class="strategy-section-label">⏳ Analyzing competitive landscape...</div>
+            <div class="strategy-logic">The Lead SEO Strategist is studying your topic, keywords, and competitive landscape to dictate the exact parameters needed to beat the top 3 results on Google...</div>
+        </div>`;
+    document.getElementById('applyStrategyBtn').style.display = 'none';
+    document.getElementById('optimizeModal').classList.add('visible');
+
+    const intents = Array.from(document.querySelectorAll('input[name="intent"]:checked')).map(cb => cb.value);
+
+    const payload = {
+        topic, primary_keyword: primaryKw,
+        secondary_keywords: document.getElementById('secondary_keywords').value,
+        search_intents: intents,
+        content_type: document.getElementById('content_type').value,
+        tone: document.querySelector('input[name="tone"]:checked')?.value || '',
+        target_audience: document.getElementById('target_audience').value,
+        word_count: document.querySelector('input[name="wc"]:checked')?.value || '',
+        cta_goal: document.getElementById('cta_goal').value,
+        company_context: document.getElementById('company_context').value,
+        requirement: document.getElementById('requirement').value,
+        prompt_instructions: document.getElementById('prompt_instructions').value,
+        internal_links: document.getElementById('internal_links').value,
+        competitor_blogs: document.getElementById('competitor_blogs').value,
+        research_data: document.getElementById('research_data').value,
+    };
+
+    try {
+        const res = await fetch('/optimize-prompt', {
+            method: 'POST', headers: {'Content-Type':'application/json'},
+            body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+
+        if (data.error) {
+            document.getElementById('strategyModalBody').innerHTML = `
+                <div class="strategy-section">
+                    <div class="strategy-section-label">⚠ Error</div>
+                    <div class="strategy-logic" style="color:var(--red)">${data.error}${data.raw ? '\n\nRaw response:\n' + data.raw : ''}</div>
+                </div>`;
+            return;
+        }
+
+        const s = data.strategy;
+        pendingStrategy = s;
+
+        // Get current values for comparison
+        const currentTone = document.querySelector('input[name="tone"]:checked')?.value || '';
+        const currentWc = document.querySelector('input[name="wc"]:checked')?.value || '';
+        const currentAudience = document.getElementById('target_audience').value || '(not set)';
+        const currentCtype = document.getElementById('content_type').value || '';
+        const currentCta = document.getElementById('cta_goal').value || '(not set)';
+
+        // Format tone labels for display
+        const toneLabels = {
+            'authoritative-conversational': 'Expert & Conversational',
+            'friendly-approachable': 'Friendly & Approachable',
+            'bold-direct': 'Bold & Direct',
+            'formal-professional': 'Formal & Professional',
+            'storytelling-narrative': 'Story-Driven',
+            'witty-engaging': 'Witty & Engaging'
+        };
+        const ctypeLabels = {
+            'comprehensive-guide': 'Comprehensive Guide', 'how-to-guide': 'How-To Guide',
+            'listicle': 'Listicle', 'comparison': 'Comparison', 'case-study': 'Case Study',
+            'opinion-thought-leadership': 'Thought Leadership', 'product-review': 'Product Review',
+            'news-roundup': 'News Roundup', 'faq-page': 'FAQ Page', 'pillar-page': 'Pillar Page'
+        };
+
+        const isChanged = (a, b) => a !== b;
+        const rowClass = (a, b) => isChanged(a, b) ? 'changed-row' : '';
+
+        document.getElementById('strategyModalBody').innerHTML = `
+            <div class="strategy-section">
+                <div class="strategy-section-label">🧠 Ranking Logic</div>
+                <div class="strategy-logic">${(s.ranking_logic || 'No ranking logic provided.').replace(/\n/g, '<br>')}</div>
+            </div>
+            <div class="strategy-section">
+                <div class="strategy-section-label">📊 Recommended Changes</div>
+                <table class="strategy-table">
+                    <thead><tr><th>Parameter</th><th>Current</th><th>Strategist Recommends</th></tr></thead>
+                    <tbody>
+                        <tr class="${rowClass(currentTone, s.tone)}">
+                            <td class="param-name">Tone</td>
+                            <td class="current-val">${toneLabels[currentTone] || currentTone}</td>
+                            <td class="new-val">${toneLabels[s.tone] || s.tone}${s.tone_descriptor ? '<span class="strategy-tone-desc">Persona: ' + s.tone_descriptor + '</span>' : ''}</td>
+                        </tr>
+                        <tr class="${rowClass(currentWc, s.word_count)}">
+                            <td class="param-name">Word Count</td>
+                            <td class="current-val">${currentWc}</td>
+                            <td class="new-val">${s.word_count}</td>
+                        </tr>
+                        <tr class="${rowClass(currentAudience, s.target_audience)}">
+                            <td class="param-name">Target Audience</td>
+                            <td class="current-val">${currentAudience}</td>
+                            <td class="new-val">${s.target_audience}</td>
+                        </tr>
+                        <tr class="${rowClass(currentCtype, s.content_type)}">
+                            <td class="param-name">Content Type</td>
+                            <td class="current-val">${ctypeLabels[currentCtype] || currentCtype}</td>
+                            <td class="new-val">${ctypeLabels[s.content_type] || s.content_type}</td>
+                        </tr>
+                        <tr class="${rowClass(currentCta, s.cta_goal)}">
+                            <td class="param-name">CTA Goal</td>
+                            <td class="current-val">${currentCta}</td>
+                            <td class="new-val">${s.cta_goal}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            ${s.prompt_instructions ? `
+            <div class="strategy-section">
+                <div class="strategy-section-label">✍ Strategic Writing Instructions</div>
+                <div class="strategy-logic">${s.prompt_instructions.replace(/\n/g, '<br>')}</div>
+            </div>` : ''}
+        `;
+
+        // Show Apply button
+        document.getElementById('applyStrategyBtn').style.display = 'inline-flex';
+
+    } catch(e) {
+        document.getElementById('strategyModalBody').innerHTML = `
+            <div class="strategy-section">
+                <div class="strategy-section-label">⚠ Error</div>
+                <div class="strategy-logic" style="color:var(--red)">Request failed: ${e.message}</div>
+            </div>`;
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = '⚡ Strategist: Optimize Inputs';
+    }
+}
+
+function applyStrategy() {
+    if (!pendingStrategy) return;
+    const s = pendingStrategy;
+
+    // Apply Tone
+    if (s.tone) {
+        const toneRadio = document.querySelector(`input[name="tone"][value="${s.tone}"]`);
+        if (toneRadio) toneRadio.checked = true;
+    }
+
+    // Apply Word Count
+    if (s.word_count) {
+        const wcRadio = document.querySelector(`input[name="wc"][value="${s.word_count}"]`);
+        if (wcRadio) wcRadio.checked = true;
+    }
+
+    // Apply Target Audience
+    if (s.target_audience) {
+        document.getElementById('target_audience').value = s.target_audience;
+    }
+
+    // Apply Content Type
+    if (s.content_type) {
+        const ctSelect = document.getElementById('content_type');
+        const optExists = Array.from(ctSelect.options).some(o => o.value === s.content_type);
+        if (optExists) ctSelect.value = s.content_type;
+    }
+
+    // Apply CTA Goal
+    if (s.cta_goal) {
+        document.getElementById('cta_goal').value = s.cta_goal;
+    }
+
+    // Apply Special Instructions (append, don't overwrite)
+    if (s.prompt_instructions) {
+        const piEl = document.getElementById('prompt_instructions');
+        const existing = piEl.value.trim();
+        if (existing) {
+            piEl.value = existing + '\n\n--- STRATEGIST INSTRUCTIONS ---\n' + s.prompt_instructions;
+        } else {
+            piEl.value = s.prompt_instructions;
+        }
+    }
+
+    updateProgress();
+    closeOptimizeModal();
+    pendingStrategy = null;
+    showToast('Strategy applied - inputs optimized');
+}
+
+function closeOptimizeModal() {
+    document.getElementById('optimizeModal').classList.remove('visible');
+}
+
+// Close modal on overlay click
+document.addEventListener('click', function(e) {
+    if (e.target.classList.contains('optimize-modal-overlay')) {
+        closeOptimizeModal();
+    }
+});
+
+// ===== SCROLLBAR =====
+</script>
+</body>
+</html>
